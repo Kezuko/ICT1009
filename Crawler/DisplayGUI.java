@@ -3,7 +3,6 @@ package grp32;
 import javax.swing.*;  
 import java.awt.GridLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowAdapter;
@@ -12,8 +11,10 @@ import java.awt.Panel;
 import java.awt.Button;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-public class DisplayGUI extends JPanel {
+public class DisplayGUI extends JPanel implements ActionListener{
 	private JTextField textField;
     public DisplayGUI() {
     	super(true);     		    // true = please double buffer
@@ -53,7 +54,7 @@ public class DisplayGUI extends JPanel {
         panel_1.setLayout(null);
         
         JComboBox comboBox = new JComboBox();
-        comboBox.setBounds(281, 6, 59, 20);
+        comboBox.setBounds(247, 6, 89, 20);
         comboBox.setModel(new DefaultComboBoxModel(new String[] {"Twitter", "CNN"}));
         panel_1.add(comboBox);
         
@@ -77,13 +78,9 @@ public class DisplayGUI extends JPanel {
         JLabel lblShowResultIn = new JLabel("Show result in a ");
         panel_2.add(lblShowResultIn);
         
-        JButton btnNewButton_2 = new JButton("new window");
-        btnNewButton_2.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		DisplayCSV dd = new DisplayCSV();
-        	}
-        });
-        panel_2.add(btnNewButton_2);
+        JButton btnNewButton = new JButton("New window");
+        btnNewButton.addActionListener(this);
+        panel_2.add(btnNewButton);
         
         JPanel panel_3 = new JPanel();
         tabbedPane.addTab("Search", null, panel_3, null);
@@ -105,6 +102,16 @@ public class DisplayGUI extends JPanel {
         comboBox_2.setModel(new DefaultComboBoxModel(new String[] {"Table", "Graph"}));
         panel_4.add(comboBox_2);
         
+    }
+    
+    public void actionPerformed(ActionEvent e){
+    	Object obj = e.getSource();
+    	if (obj instanceof JButton) {																												//validate "New window" is creating
+    		if ( ((JButton)obj).getText().equals("New window")){
+	    		DisplayCSV dd = new DisplayCSV();
+	        	dd.createAndShowGUI();
+    		}
+    	}  	
     }
 
     public static void main(String[] args) {

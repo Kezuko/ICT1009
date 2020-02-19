@@ -6,14 +6,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;																																//
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowSorter;																														//
+import javax.swing.SortOrder;																														//
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;																												//
+import javax.swing.table.TableRowSorter;																											//
 
 public class DisplayCSV extends JPanel {
     private final JTable table;
@@ -23,22 +27,43 @@ public class DisplayCSV extends JPanel {
         this.table = new JTable(new MyModel());
         this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
         this.table.setFillsViewportHeight(true);
-        JPanel ButtonOpen = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel ButtonOpen;
+        ButtonOpen = new JPanel(new FlowLayout(FlowLayout.CENTER));
         add(ButtonOpen, BorderLayout.SOUTH);
-        // Create the scroll pane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);
-        // Add the scroll pane to this panel.
+
+        JScrollPane scrollPane;
+        scrollPane = new JScrollPane(table);
+
         add(scrollPane, BorderLayout.CENTER);
-        // add a nice border
+
         setBorder(new EmptyBorder(5, 5, 5, 5));
-        CSVFile Rd = new CSVFile();
-        MyModel NewModel = new MyModel();
+        CSVFile Rd;
+        Rd = new CSVFile();
+        MyModel NewModel;
+        NewModel = new MyModel();
         this.table.setModel(NewModel);
-        File DataFile = new File("100 Sales Records.csv");																							//change filename
-        ArrayList<String[]> Rs2 = Rd.ReadCSVfile(DataFile);
+        File DataFile;
+        DataFile = new File("100 Sales Records.csv");																							//change filename
+        ArrayList<String[]> Rs2;
+        Rs2 = Rd.ReadCSVfile(DataFile);
         NewModel.AddCSVData(Rs2);
 //        System.out.println("Rows: " + NewModel.getRowCount());
 //        System.out.println("Cols: " + NewModel.getColumnCount());
+        TableRowSorter<TableModel> sorter;
+        sorter = new TableRowSorter<>(table.getModel());																	//start sort
+        table.setRowSorter(sorter);
+        List<RowSorter.SortKey> sortKeys;
+        sortKeys = new ArrayList<>();
+         
+        int columnIndexToSort = 1;
+        while (columnIndexToSort <14){
+        	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+        }
+         
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();																																//end sort
+        
+//        createAndShowGUI();																															//display GUI
     }
 
     // Method for reading CSV file
@@ -48,30 +73,34 @@ public class DisplayCSV extends JPanel {
 
         public ArrayList<String[]> ReadCSVfile(File DataFile) {
             try {
-                BufferedReader brd = new BufferedReader(new FileReader(DataFile));
+                BufferedReader brd;
+                brd = new BufferedReader(new FileReader(DataFile));
                 while (brd.ready()) {
-                    String st = brd.readLine();
+                    String st;
+                    st = brd.readLine();
                     OneRow = st.split(",|\\s|;");
                     Rs.add(OneRow);
 //                    System.out.println(Arrays.toString(OneRow));
-                } // end of while
-            } // end of try
+                }
+            } 
             catch (Exception e) {
                 String errmsg = e.getMessage();
                 System.out.println("File not found:" + errmsg);
-            } // end of Catch
+            } 
             return Rs;
-        }// end of ReadFile method
-    }// end of CSVFile class
+        }
+    }
 
-    private static void createAndShowGUI() {
-        // Create and set up the window.
-        JFrame frame = new JFrame("T1Data");
+    public void createAndShowGUI() {
+
+        JFrame frame;
+        frame = new JFrame("T1Data");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Create and set up the content pane.
-        DisplayCSV newContentPane = new DisplayCSV();
+
+        DisplayCSV newContentPane;
+        newContentPane = new DisplayCSV();
         frame.setContentPane(newContentPane);
-        // Display the window.
+
         frame.pack();
         frame.setSize(1500, 1000);																													//change window size
         frame.setVisible(true);
@@ -79,7 +108,7 @@ public class DisplayCSV extends JPanel {
 
     class MyModel extends AbstractTableModel {
         private final String[] columnNames = { "Region", "Country", "Item type", "Sales Channel", "Order Priority", "Order Date", "Order ID", "Ship Date", "Units Sold", "Unit Price", "Unit Cost", "Total Revenue", "Total Cost", "Total Profit" };
-private ArrayList<String[]> Data = new ArrayList<String[]>();																		//change column name(one line above)
+    	private ArrayList<String[]> Data = new ArrayList<String[]>();																		//change column name(one line above)
 
         public void AddCSVData(ArrayList<String[]> DataIn) {
             this.Data = DataIn;
@@ -88,7 +117,7 @@ private ArrayList<String[]> Data = new ArrayList<String[]>();																		/
 
         @Override
         public int getColumnCount() {
-            return columnNames.length;// length;
+            return columnNames.length;
         }
 
         @Override
@@ -110,11 +139,11 @@ private ArrayList<String[]> Data = new ArrayList<String[]>();																		/
     public static void main(String[] args) {
         // Schedule a job for the event-dispatching thread:
         // creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+//        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                createAndShowGUI();
+//            }
+//        });
     }
 }
