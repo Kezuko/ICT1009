@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DisplayGUI extends JPanel implements ActionListener{
+public class DisplayGUI extends JPanel{
 	private JTextField textField;
     public DisplayGUI() {
     	super(true);     		    // true = please double buffer
@@ -78,9 +78,15 @@ public class DisplayGUI extends JPanel implements ActionListener{
         JLabel lblShowResultIn = new JLabel("Show result in a ");
         panel_2.add(lblShowResultIn);
         
-        JButton btnNewButton = new JButton("New window");
-        btnNewButton.addActionListener(this);
-        panel_2.add(btnNewButton);
+        JButton btnFiletoJTable = new JButton("New window");
+        btnFiletoJTable.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		FiletoJTable fileT = new FiletoJTable();
+	    		fileT.createUI();
+        	}
+        });
+        
+        panel_2.add(btnFiletoJTable);
         
         JPanel panel_3 = new JPanel();
         tabbedPane.addTab("Search", null, panel_3, null);
@@ -91,6 +97,18 @@ public class DisplayGUI extends JPanel implements ActionListener{
         JComboBox comboBox_1 = new JComboBox();
         comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Date", "Location", "Time"}));
         panel_3.add(comboBox_1);
+        
+        JLabel lblShowResultIn_1 = new JLabel("Show result in a");
+        panel_3.add(lblShowResultIn_1);
+        
+        JButton btnOpenCSV = new JButton("New window");
+        btnOpenCSV.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		DisplayCSV csv = new DisplayCSV();
+	    		csv.createAndShowGUI();
+        	}
+        });
+        panel_3.add(btnOpenCSV);
         
         JPanel panel_4 = new JPanel();
         tabbedPane.addTab("Results of analysis", null, panel_4, null);
@@ -104,15 +122,15 @@ public class DisplayGUI extends JPanel implements ActionListener{
         
     }
     
-    public void actionPerformed(ActionEvent e){
-    	Object obj = e.getSource();
-    	if (obj instanceof JButton) {																												//validate "New window" is creating
-    		if ( ((JButton)obj).getText().equals("New window")){
-	    		DisplayCSV dd = new DisplayCSV();
-	        	dd.createAndShowGUI();
-    		}
-    	}  	
-    }
+//    public void actionPerformed(ActionEvent e){
+//    	Object obj = e.getSource();
+//    	if (obj instanceof JButton) {																												//validate "New window" is creating
+//    		if ( ((JButton)obj).getText().equals("New window")){
+//	    		FiletoJTable fileT = new FiletoJTable();
+//	    		fileT.createUI();
+//    		}
+//    	}  	
+//    }
 
     public static void main(String[] args) {
 	/*
