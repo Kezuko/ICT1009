@@ -1,5 +1,4 @@
-//package com.mkyong.basicwebcrawler;
-package myPackage;
+package grp32;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,12 +13,13 @@ import org.jsoup.nodes.Element;
 
 
 
-class BasicWebCrawler extends crawler implements News{
+class BasicWebCrawler extends Crawler implements News{
 	private static final int MAX_DEPTH = 15;
     private HashSet<String> visited_Links; // stores the links that the crawler has visited
     private String baseURL; // Starting URL
     private int visitedPages = 0;
-    private static final int maxPage = 5000;
+//    private static final int maxPage = 5000;
+    private static final int maxPage = 300;
     private String keyword2;
     
     
@@ -54,7 +54,10 @@ class BasicWebCrawler extends crawler implements News{
             				// Get Articles that are within the current website scope and checking for if got keyword or no keyword
             					if(!visited_Links.contains(CurrentLink) && CurrentLink.contains(baseURL) && !CurrentLink.contains(".jpg") ){   
             						if(!CurrentLink.contains("#")){
-            							if(this.keyword.isBlank()) { // for keyword being empty
+            							/************************
+            							 * if(this.keyword.isBlank()){ *																				doesn't work
+            							 */
+            							if(this.keyword.isEmpty()) { // for keyword being empty
             								this.getArticlesOfKeyWord(this.keyword,CurrentLink);
             							}
             							else
@@ -124,11 +127,3 @@ class BasicWebCrawler extends crawler implements News{
     }
    
 }
-   
-
-  
-
-
-
-
-

@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;																																//
 
 import javax.swing.JFrame;
@@ -22,6 +23,12 @@ import javax.swing.table.TableRowSorter;																											//
 public class DisplayCSV extends JPanel {
     private final JTable table;
 
+    private static String fn;
+    
+    public static void setFn(String fn){
+    	DisplayCSV.fn = fn;
+    }
+    
     public DisplayCSV() {
         super(new BorderLayout(3, 3));
         this.table = new JTable(new MyModel());
@@ -43,25 +50,25 @@ public class DisplayCSV extends JPanel {
         NewModel = new MyModel();
         this.table.setModel(NewModel);
         File DataFile;
-        DataFile = new File("100 Sales Records.csv");																							//change filename
+        DataFile = new File(fn);																							//change filename
         ArrayList<String[]> Rs2;
         Rs2 = Rd.ReadCSVfile(DataFile);
         NewModel.AddCSVData(Rs2);
 //        System.out.println("Rows: " + NewModel.getRowCount());
 //        System.out.println("Cols: " + NewModel.getColumnCount());
-        TableRowSorter<TableModel> sorter;
-        sorter = new TableRowSorter<>(table.getModel());																	//start sort
-        table.setRowSorter(sorter);
-        List<RowSorter.SortKey> sortKeys;
-        sortKeys = new ArrayList<>();
-         
-        int columnIndexToSort = 1;
-        while (columnIndexToSort <14){
-        	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
-        }
-         
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();																																//end sort
+//        TableRowSorter<TableModel> sorter;
+//        sorter = new TableRowSorter<>(table.getModel());																	//start sort
+//        table.setRowSorter(sorter);
+//        List<RowSorter.SortKey> sortKeys;
+//        sortKeys = new ArrayList<>();
+//         
+//        int columnIndexToSort = 1;
+//        while (columnIndexToSort <3){
+//        	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+//        }
+//         
+//        sorter.setSortKeys(sortKeys);
+//        sorter.sort();																																//end sort
         
 //        createAndShowGUI();																															//display GUI
     }
@@ -75,12 +82,14 @@ public class DisplayCSV extends JPanel {
             try {
                 BufferedReader brd;
                 brd = new BufferedReader(new FileReader(DataFile));
+                brd.readLine();
                 while (brd.ready()) {
                     String st;
                     st = brd.readLine();
-                    OneRow = st.split(",|\\s|;");
+//                    OneRow = st.split(",|\\s|;");
+                    OneRow = st.split(",|;");
                     Rs.add(OneRow);
-//                    System.out.println(Arrays.toString(OneRow));
+                    System.out.println(Arrays.toString(OneRow));
                 }
             } 
             catch (Exception e) {
@@ -107,7 +116,8 @@ public class DisplayCSV extends JPanel {
     }
 
     class MyModel extends AbstractTableModel {
-        private final String[] columnNames = { "Region", "Country", "Item type", "Sales Channel", "Order Priority", "Order Date", "Order ID", "Ship Date", "Units Sold", "Unit Price", "Unit Cost", "Total Revenue", "Total Cost", "Total Profit" };
+        //private final String[] columnNames = { "Username", "Tweet", " Retweet_Count", "Favourite_Count", "Date"  };						//for twitter
+        private final String[] columnNames = { "Article_Category", "Article_Title", " Date_Published" };									//for CNA
     	private ArrayList<String[]> Data = new ArrayList<String[]>();																		//change column name(one line above)
 
         public void AddCSVData(ArrayList<String[]> DataIn) {

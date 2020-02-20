@@ -21,7 +21,7 @@ public class DisplayGUI extends JPanel{
 
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
-	
+		
 		//PENDING: Add icons to tabs.
 		String crawlFromHereLabel = "Crawl from here :";
 		JLabel l = new JLabel(crawlFromHereLabel);
@@ -31,8 +31,8 @@ public class DisplayGUI extends JPanel{
 	    JComboBox cb=new JComboBox(crawlFromHereList);
 	    cb.setBounds(50, 50,90,20);
 	    
-	    JButton b=new JButton("Click here to crawl");  
-	    b.setBounds(50,100,95,30);  
+	    JButton b=new JButton("Click here to crawl");
+	    b.setBounds(50,100,95,30);
 	    
 	    JPanel panel = new JPanel();
 		panel.setLayout(new FlowLayout());
@@ -54,11 +54,36 @@ public class DisplayGUI extends JPanel{
         panel_1.setLayout(null);
         
         JComboBox comboBox = new JComboBox();
+        comboBox.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String s = (String) comboBox.getSelectedItem();//get the selected item
+
+                switch (s) {//check for a match
+                    case "Twitter":
+                    	Crawler crawlTwitter = new CrawlWithTJ4("Wuhan");
+                    	((CrawlWithTJ4) crawlTwitter).searchTweets();
+                    	crawlTwitter.writeToFile("twitter - Copy 5.csv");
+                        break;
+                    case "CNA":
+                    	BasicWebCrawler bwc = new BasicWebCrawler("https://www.channelnewsasia.com/", "", "");
+                		bwc.getPageLinks("https://www.channelnewsasia.com/",0);
+                		bwc.writeToFile("cna - Copy.csv");
+                        break;
+                }
+        	}
+        });
         comboBox.setBounds(247, 6, 89, 20);
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"Twitter", "CNN"}));
+        comboBox.setModel(new DefaultComboBoxModel(new String[] {"Twitter", "CNA"}));
         panel_1.add(comboBox);
         
         Button button = new Button("Crawl");
+        button.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		BasicWebCrawler bwc = new BasicWebCrawler("https://www.channelnewsasia.com/", "", "");
+        		bwc.getPageLinks("https://www.channelnewsasia.com/",0);
+        		bwc.writeToFile("twitter - Copy 3.csv");
+        	}
+        });
         button.setBounds(346, 4, 89, 22);
         panel_1.add(button);
         
@@ -104,6 +129,7 @@ public class DisplayGUI extends JPanel{
         JButton btnOpenCSV = new JButton("New window");
         btnOpenCSV.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		DisplayCSV.setFn("cna.csv");
         		DisplayCSV csv = new DisplayCSV();
 	    		csv.createAndShowGUI();
         	}

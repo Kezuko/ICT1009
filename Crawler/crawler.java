@@ -1,4 +1,4 @@
-package myPackage;
+package grp32;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-abstract class crawler {
+abstract class Crawler {
 
 	List<String[]> data;
 	String keyword;
 	
-	public crawler() {
+	public Crawler() {
 		
 	}
 	
-	public crawler(String key) {
+	public Crawler(String key) {
 		 	keyword = key;
 		   	data = new ArrayList();
 	}

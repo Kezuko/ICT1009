@@ -1,4 +1,4 @@
-package myPackage;
+package grp32;
 
 public interface News {
 	void getPageLinks(String URL, int depth);

@@ -1,18 +1,16 @@
-package myPackage;
+package grp32;
 
 
 import java.io.IOException;
 import java.text.DateFormat;  
 import java.text.SimpleDateFormat;  
-import java.util.Date;
-
 // importing twitter4j libraries
 import twitter4j.*;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
-class CrawlWithTJ4 extends crawler implements Tweet {
+class CrawlWithTJ4 extends Crawler implements Tweet {
 
 	private static final String con_Key = "DubGZhfy08e2kF7r4Z1FnH5nu";
 	private static final String con_s="hfX9xdxvppgMIKaeJi2X8fzbood46UNyRJa25yzTQr931OOAmN";
