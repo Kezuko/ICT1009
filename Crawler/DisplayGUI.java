@@ -16,6 +16,8 @@ import java.awt.event.MouseEvent;
 
 public class DisplayGUI extends JPanel{
 	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
     public DisplayGUI() {
     	super(true);     		    // true = please double buffer
 
@@ -116,12 +118,13 @@ public class DisplayGUI extends JPanel{
         JPanel panel_3 = new JPanel();
         tabbedPane.addTab("Search", null, panel_3, null);
         
-        JLabel lblNewLabel = new JLabel("Search");
-        panel_3.add(lblNewLabel);
+        textField_1 = new JTextField();
+        panel_3.add(textField_1);
+        textField_1.setColumns(10);
         
-        JComboBox comboBox_1 = new JComboBox();
-        comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Date", "Location", "Time"}));
-        panel_3.add(comboBox_1);
+        textField_2 = new JTextField();
+        panel_3.add(textField_2);
+        textField_2.setColumns(10);
         
         JLabel lblShowResultIn_1 = new JLabel("Show result in a");
         panel_3.add(lblShowResultIn_1);
@@ -129,9 +132,12 @@ public class DisplayGUI extends JPanel{
         JButton btnOpenCSV = new JButton("New window");
         btnOpenCSV.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		DisplayCSV.setFn("cna.csv");
-        		DisplayCSV csv = new DisplayCSV();
-	    		csv.createAndShowGUI();
+        		Analysis.setFn("twitter - Copy 5.csv");																		//setter for filename, search criteria
+        		Analysis.setSc1(textField_1.getText().trim());
+        		Analysis.setSc2(textField_2.getText().trim());
+                Analysis aaa = new Analysis();
+            	
+            	aaa.createAndShowGUI();
         	}
         });
         panel_3.add(btnOpenCSV);
