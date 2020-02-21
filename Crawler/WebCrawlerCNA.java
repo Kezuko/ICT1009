@@ -21,6 +21,7 @@ class WebCrawlerCNA extends Crawler implements News{
 //    private static final int maxPage = 5000;
     private static int maxPage = 300;
     private String keyword2;
+    private int counter = 0;
     
     public static void setMaxPage(int maxPage){WebCrawlerCNA.maxPage = maxPage;}
     
@@ -31,14 +32,13 @@ class WebCrawlerCNA extends Crawler implements News{
         keyword2 = key2;
     }
     
+    public int getCounter() {
+    	return this.counter;
+    }
     
 
     public void getPageLinks(String URL, int depth)// ,int col_node 
     {
-    
-    		
-    	
-    	
         if ((!visited_Links.contains(URL) && (depth <= MAX_DEPTH))) {
         	
             try {
@@ -101,9 +101,9 @@ class WebCrawlerCNA extends Crawler implements News{
     				if(articleHeader.text().length() != 0) { // making sure that crawler saves actual data and not empty
     					if(tempArray.length >4) {
     						//System.out.println(tempArray[3] + " "+tempArray[4]);
-    						this.data.add(new String[]{tempArray[4],articleHeader.text(),articleDate.text()});
     						
-        				
+    						this.data.add(new String[]{tempArray[4],articleHeader.text(),articleDate.text()});
+    						this.counter++;
     					}
     					
     				}
