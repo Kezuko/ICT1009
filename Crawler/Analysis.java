@@ -35,12 +35,19 @@ public class Analysis extends JPanel{
 	
 	private final JTable table;
 
-    private static String fn;
+	private static String fn1;
+    private static String fn2;
+    private static String mainFile;
     private static String sc1;
     private static String sc2;
     
-    public static void setFn(String fn){
-    	Analysis.fn = fn;
+    public static void setFn1(String fn){
+    	Analysis.fn1 = fn;
+    	Analysis.mainFile = fn;
+    }
+    public static void setFn2(String fn){
+    	Analysis.fn2 = fn;
+    	Analysis.mainFile = fn;
     }
     public static void setSc1(String fn){																//file name
     	Analysis.sc1 = fn;
@@ -54,6 +61,7 @@ public class Analysis extends JPanel{
         super(new BorderLayout(3, 3));
         
         this.table = new JTable(new MyModel());
+        this.table.setBounds(0, 0, 1500, 750);
         this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
         this.table.setFillsViewportHeight(true);
         JPanel ButtonOpen;
@@ -66,59 +74,12 @@ public class Analysis extends JPanel{
         add(scrollPane, BorderLayout.CENTER);
 
         setBorder(new EmptyBorder(5, 5, 5, 5));
-        CSVFile Rd;
-        Rd = new CSVFile();
         MyModel NewModel;
         NewModel = new MyModel();
         this.table.setModel(NewModel);
         
         this.analyse();
-        																							//change filename
-        
-//        System.out.println("Rows: " + NewModel.getRowCount());
-//        System.out.println("Cols: " + NewModel.getColumnCount());
-        TableRowSorter<TableModel> sorter;
-        sorter = new TableRowSorter<>(table.getModel());																	//start sort
-        table.setRowSorter(sorter);
-        List<RowSorter.SortKey> sortKeys;
-        sortKeys = new ArrayList<>();
-         
-        int columnIndexToSort = 1;
-        while (columnIndexToSort <3){
-        	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
-        }
-         
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();																																//end sort
-        
-//        createAndShowGUI();																															//display GUI
-    }
 
-    // Method for reading CSV file
-    public class CSVFile {
-        private final ArrayList<String[]> Rs = new ArrayList<String[]>();
-        private String[] OneRow;
-
-        public ArrayList<String[]> ReadCSVfile(File DataFile) {
-            try {
-                BufferedReader brd;
-                brd = new BufferedReader(new FileReader(DataFile));
-                brd.readLine();
-                while (brd.ready()) {
-                    String st;
-                    st = brd.readLine();
-//                    OneRow = st.split(",|\\s|;");
-                    OneRow = st.split(",|;");
-                    Rs.add(OneRow);
-                    System.out.println(Arrays.toString(OneRow));
-                }
-            } 
-            catch (Exception e) {
-                String errmsg = e.getMessage();
-                System.out.println("File not found:" + errmsg);
-            } 
-            return Rs;
-        }
     }
 
     public void createAndShowGUI() {
@@ -137,7 +98,7 @@ public class Analysis extends JPanel{
     }
 
     class MyModel extends AbstractTableModel {
-        private final String[] columnNames = { "Username", "Tweet", " Retweet_Count", "Favourite_Count", "Date" };						//for twitter
+        private String[] columnNames = { "Username", "Tweet", " Retweet_Count", "Favourite_Count", "Date" };						//for twitter
         //private final String[] columnNames = { "Article_Category", "Article_Title", " Date_Published" };									//for CNA
     	private ArrayList<String[]> Data = new ArrayList<String[]>();																		//change column name(one line above)
 
@@ -145,6 +106,8 @@ public class Analysis extends JPanel{
             this.Data = DataIn;
             this.fireTableDataChanged();
         }
+        
+        public void setColumnNames(String[] colsName){columnNames = colsName;}
 
         @Override
         public int getColumnCount() {
@@ -172,14 +135,16 @@ public class Analysis extends JPanel{
         MyModel NewModel;
         NewModel = new MyModel();
         File DataFile;
-        DataFile = new File(fn);
+        DataFile = new File(mainFile);
 
         try {
 
-            FileReader filereader = new FileReader(fn); 
+            FileReader filereader = new FileReader(mainFile); 
 
             // create csvReader object and skip first Line 
-            CSVReader csvReader = new CSVReaderBuilder(filereader).withSkipLines(1).build(); 
+            CSVReader csvReader = new CSVReaderBuilder(filereader).build(); 
+            String[] temp = csvReader.readNext();
+            NewModel.setColumnNames(temp);
             List<String[]> allData = csvReader.readAll();
             
             String regex = "^(?=.*\\b"+sc1+"\\b)(?=.*\\b"+sc2+"\\b).*$";
@@ -206,9 +171,25 @@ public class Analysis extends JPanel{
             
             table.setModel(NewModel);
             NewModel.AddCSVData(Rs2);
-            StanfordCoreNlpDemo jihyo = new StanfordCoreNlpDemo();
-        	PieChart example = new PieChart("Pie Chart Example | BORAJI.COM");
+            
+            TableRowSorter<TableModel> sorter;
+            sorter = new TableRowSorter<>(table.getModel());																	//start sort
+            table.setRowSorter(sorter);
+            List<RowSorter.SortKey> sortKeys;
+            sortKeys = new ArrayList<>();
+             
+            int columnIndexToSort = 1;
+            while (columnIndexToSort <NewModel.getColumnCount()){
+            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+            }
+             
+            sorter.setSortKeys(sortKeys);
+            sorter.sort();
+            
+            StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();
+        	PieChart example = new PieChart(Analysis.mainFile);
             example.setSize(800, 400);
+            example.setBounds(1501, 0, 1500, 750);
             example.setLocationRelativeTo(null);
             example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             example.setVisible(true);
@@ -222,21 +203,5 @@ public class Analysis extends JPanel{
             e.printStackTrace();
         }
 	}
-    
-    public static void main(String[] args) {
-    	Analysis.setFn("twitter - Copy 5.csv");
-        Analysis aaa = new Analysis();
-    	
-    	aaa.createAndShowGUI();
-    	
-    	StanfordCoreNlpDemo jihyo = new StanfordCoreNlpDemo();
-    	PieChart example = new PieChart("Pie Chart Example | BORAJI.COM");
-        example.setSize(800, 400);
-        example.setLocationRelativeTo(null);
-        example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        example.setVisible(true);
-    	
-    }
-    
-    
+
 }

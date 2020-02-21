@@ -57,11 +57,11 @@ class CrawlWithTJ4 extends Crawler implements Tweet {
 		AccessToken oathAccessT = new AccessToken(access_T,access_T_S);
 		twitter.setOAuthAccessToken(oathAccessT);
 		int i = 0;
-		DateFormat dateFormat = new SimpleDateFormat("dd mm yyyy hh:mm.a");  
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm.a");  
 		String strDate = new String();
 		Query query = new Query();
 		query.setLang("en");
-		query.setQuery(this.keyword +" +exclude:retweets");
+		query.setQuery(this.keyword +"+exclude:retweets");
 		QueryResult result ;
 		try {
 		    do {
@@ -83,7 +83,7 @@ class CrawlWithTJ4 extends Crawler implements Tweet {
 				
 		    
 		    i++;
-		    }while((query = result.nextQuery()) != null || i > this.max_Pages);
+		    }while((query = result.nextQuery()) != null && i > this.max_Pages);
 		 
 		    
 		    	
