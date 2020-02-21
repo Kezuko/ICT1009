@@ -16,8 +16,13 @@ public class StanfordCoreNlpDemo
     private static DecimalFormat df2 = new DecimalFormat("#.##");
  
     private static ArrayList<String> lineArr = new ArrayList<>();
+    private static ArrayList<String[]> sentimentTableData = new ArrayList<>();
+    private static String sentimentTableHeader;
     
     public static void setLine(String line){StanfordCoreNlpDemo.lineArr.add(line);}
+    public static ArrayList<String[]> getSentimentTableData(){
+    	return StanfordCoreNlpDemo.sentimentTableData;}
+    public static void setSentimentTableHeader(String sentimentTableHeader){StanfordCoreNlpDemo.sentimentTableHeader = sentimentTableHeader;}
     
     public StanfordCoreNlpDemo(){
         int negative=0;
@@ -97,6 +102,11 @@ public class StanfordCoreNlpDemo
         PieChart.setNeu(neutPercentage);
         PieChart.setvNeg(vNegPercentage);
         PieChart.setvPos(vPosPercentage);
+        DisplayGUI.setNeg(negPercentage);																				//negative sentiment
+        DisplayGUI.setPos(posPercentage);
+        DisplayGUI.setNeu(neutPercentage);
+        DisplayGUI.setvNeg(vNegPercentage);
+        DisplayGUI.setvPos(vPosPercentage);
         // System.out.println("The tweet is " + df2.format(posPercentage) + "% positive");
         if(totalNeg > totalPos){
             System.out.println("The overall tweet is negative");

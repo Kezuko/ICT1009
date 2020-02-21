@@ -34,16 +34,18 @@ import java.util.*;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-public class Analysis extends JPanel{
+public class Analysis{
 	
 	private final JTable table;
+	private JScrollPane scrollPane;
+	private JPanel ButtonOpen;
+	private JFrame frame;
 
 	private static String fn1;
     private static String fn2;
     private static String mainFile;
     private static String sc1;
     private static String sc2;
-    private Analysis an;
     private int counter =1;
     
     public static void setFn1(String fn){
@@ -63,14 +65,14 @@ public class Analysis extends JPanel{
     
     
     public Analysis() {  	
-        super(new BorderLayout(3, 3));
+//        super(new BorderLayout(3, 3));
         this.table = new JTable(new MyModel());
         this.table.setBounds(0, 0, 1500, 750);
         this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
         this.table.setFillsViewportHeight(true);
-        JPanel ButtonOpen;
-        ButtonOpen = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        add(ButtonOpen, BorderLayout.SOUTH);
+        
+        this.ButtonOpen = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//        this.ButtonOpen.add(ButtonOpen, BorderLayout.SOUTH);
         
         JButton btnNewButton = new JButton("New button");
         btnNewButton.addActionListener(new ActionListener() {
@@ -84,33 +86,36 @@ public class Analysis extends JPanel{
                 example.setVisible(true);
         	}
         });
-        ButtonOpen.add(btnNewButton);
+        this.ButtonOpen.add(btnNewButton);
 
-        JScrollPane scrollPane;
-        scrollPane = new JScrollPane(table);
+        
+        
 
-        add(scrollPane, BorderLayout.CENTER);
+//        add(scrollPane, BorderLayout.CENTER);
 
-        setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.ButtonOpen.setBorder(new EmptyBorder(5, 5, 5, 5));
         MyModel NewModel;
         NewModel = new MyModel();
         this.table.setModel(NewModel);
         
-        this.analyse();
+        //this.analyse();
 
     }
 
     public void createAndShowGUI() {
 
-        JFrame frame;
-        frame = new JFrame("Displaying Sentiment Analysis of "+Analysis.mainFile);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        this.frame = new JFrame("Displaying Sentiment Analysis of "+Analysis.mainFile);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 //        Analysis newContentPane;
 //        newContentPane = new Analysis();
         
-        frame.setContentPane(new Analysis());
-
+//        this.frame.setContentPane(new Analysis());
+        this.frame.add(this.ButtonOpen, BorderLayout.SOUTH);
+        this.frame.add(this.scrollPane, BorderLayout.CENTER);
+        //this.frame.setContentPane(this.ButtonOpen);
+        
         frame.pack();
         frame.setSize(1500, 1000);																													//change window size
         frame.setVisible(true);
@@ -150,6 +155,7 @@ public class Analysis extends JPanel{
     }
 
     public void analyse(){
+    	
         ArrayList<String[]> Rs2 = new ArrayList<>();
         MyModel NewModel;
         NewModel = new MyModel();
@@ -190,12 +196,13 @@ public class Analysis extends JPanel{
         		//}
             }
             
-            table.setModel(NewModel);
+            this.table.setModel(NewModel);
             NewModel.AddCSVData(Rs2);
             
+            
             TableRowSorter<TableModel> sorter;
-            sorter = new TableRowSorter<>(table.getModel());																	//start sort
-            table.setRowSorter(sorter);
+            sorter = new TableRowSorter<>(this.table.getModel());																	//start sort
+            this.table.setRowSorter(sorter);
             List<RowSorter.SortKey> sortKeys;
             sortKeys = new ArrayList<>();
              
@@ -206,6 +213,9 @@ public class Analysis extends JPanel{
              
             sorter.setSortKeys(sortKeys);
             sorter.sort();
+            
+            this.scrollPane = new JScrollPane(this.table);
+            //this.ButtonOpen.add(this.scrollPane, BorderLayout.CENTER);
             
                 
 
