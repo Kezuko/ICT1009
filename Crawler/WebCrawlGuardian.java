@@ -1,5 +1,5 @@
 //package com.mkyong.basicwebcrawler;
-package myPackage;
+package grp32;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,12 +14,12 @@ import org.jsoup.nodes.Element;
 
 
 
-class WebCrawlGuardian extends crawler implements News{
+class WebCrawlGuardian extends Crawler implements News{
 	private static final int MAX_DEPTH = 15;
     private HashSet<String> visited_Links; // stores the links that the crawler has visited
     private String baseURL; // Starting URL
     private int visitedPages = 0;
-    private int maxPage = 300;
+    private static int maxPage = 300;
     private String keyword2;
     
     
@@ -30,7 +30,7 @@ class WebCrawlGuardian extends crawler implements News{
         keyword2 = key2;
     }
     
-    public void setMaxPage(int Max) {
+    public static void setMaxPage(int Max) {
     	maxPage = Max;
     }
     
@@ -144,18 +144,6 @@ class WebCrawlGuardian extends crawler implements News{
     	}
     	
     }
-    
-    /*public static void main(String[] args) {
-     	String keyword = "";
-	    	String keyword2 = "";
-	    	String URL = "https://www.theguardian.com/";
-	    	//String URL = "https://www.bbc.com/";
-	    	News webCrawlCNN = new WebCrawlCNN(URL,keyword,keyword2);
-     		webCrawlCNN.getPageLinks(URL,0); 
-	    	String csv_Name = "Test.csv";
-	    	webCrawlCNN.writeToFile(csv_Name);
-     
-     }*/
    	
 }
    

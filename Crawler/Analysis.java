@@ -31,6 +31,9 @@ import javax.swing.SortOrder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import java.util.*;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 public class Analysis extends JPanel{
 	
 	private final JTable table;
@@ -40,6 +43,8 @@ public class Analysis extends JPanel{
     private static String mainFile;
     private static String sc1;
     private static String sc2;
+    private Analysis an;
+    private int counter =1;
     
     public static void setFn1(String fn){
     	Analysis.fn1 = fn;
@@ -59,7 +64,6 @@ public class Analysis extends JPanel{
     
     public Analysis() {  	
         super(new BorderLayout(3, 3));
-        
         this.table = new JTable(new MyModel());
         this.table.setBounds(0, 0, 1500, 750);
         this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
@@ -67,6 +71,20 @@ public class Analysis extends JPanel{
         JPanel ButtonOpen;
         ButtonOpen = new JPanel(new FlowLayout(FlowLayout.CENTER));
         add(ButtonOpen, BorderLayout.SOUTH);
+        
+        JButton btnNewButton = new JButton("New button");
+        btnNewButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();
+            	PieChart example = new PieChart(Analysis.mainFile);
+                example.setSize(800, 400);
+                example.setBounds(1501, 0, 1500, 750);
+                example.setLocationRelativeTo(null);
+                example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                example.setVisible(true);
+        	}
+        });
+        ButtonOpen.add(btnNewButton);
 
         JScrollPane scrollPane;
         scrollPane = new JScrollPane(table);
@@ -85,12 +103,13 @@ public class Analysis extends JPanel{
     public void createAndShowGUI() {
 
         JFrame frame;
-        frame = new JFrame("T1Data");
+        frame = new JFrame("Displaying Sentiment Analysis of "+Analysis.mainFile);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Analysis newContentPane;
-        newContentPane = new Analysis();
-        frame.setContentPane(newContentPane);
+//        Analysis newContentPane;
+//        newContentPane = new Analysis();
+        
+        frame.setContentPane(new Analysis());
 
         frame.pack();
         frame.setSize(1500, 1000);																													//change window size
@@ -151,22 +170,24 @@ public class Analysis extends JPanel{
             Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
             
             for (String[] row : allData) { 
-            	if (row == null){
+            	//if (row == null){
                 // Arrays.sort(row[1]);
 	                
-                }
-            	else{
+               // }
+            	//else{
             //		if(row[1].toLowerCase().contains(sc1.toLowerCase()) && row[1].toLowerCase().contains(sc2.toLowerCase())){		//sc1 = "wuhan", sc2 = "singapore"
             		Matcher matcher = pattern.matcher(row[1]);
             		if(matcher.matches()){
             			Rs2.add(row);
+            			System.out.println("Analysis checking = " + row[1] + counter);
+            			counter++;
 	                	StanfordCoreNlpDemo.setLine(row[1]);
             		}
 //	                    System.out.println(row);
 	                	
 
             //		}
-        		}
+        		//}
             }
             
             table.setModel(NewModel);
@@ -186,13 +207,6 @@ public class Analysis extends JPanel{
             sorter.setSortKeys(sortKeys);
             sorter.sort();
             
-            StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();
-        	PieChart example = new PieChart(Analysis.mainFile);
-            example.setSize(800, 400);
-            example.setBounds(1501, 0, 1500, 750);
-            example.setLocationRelativeTo(null);
-            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            example.setVisible(true);
                 
 
         } catch (FileNotFoundException e) {

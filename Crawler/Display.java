@@ -31,9 +31,6 @@ import javax.swing.SortOrder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-import grp32.DisplayCSV.CSVFile;
-import grp32.DisplayCSV.MyModel;
-
 import java.util.*;
 
 import javax.swing.DefaultComboBoxModel;
@@ -144,7 +141,7 @@ public class Display extends JPanel{
     public void createAndShowGUI() {
 
         JFrame frame;
-        frame = new JFrame("T1Data");
+        frame = new JFrame("Displaying table data from "+Display.mainFile);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Display newContentPane;

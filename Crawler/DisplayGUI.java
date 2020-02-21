@@ -23,8 +23,7 @@ public class DisplayGUI extends JPanel{
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private Display dd;
-	private Analysis an;
-	private Filter f;
+//	private Analysis an;
 	private JTextField textField;
 	private JTextField textField_3;
 	private static JTable piechartTable;
@@ -110,7 +109,6 @@ public class DisplayGUI extends JPanel{
                             crawlTwitter.writeToFile(file.getName());
                             Analysis.setFn1(file.getName());	
                             Display.setFn1(file.getName());
-                            Filter.setFn1(file.getName());
                             
 
                         } else {
@@ -133,7 +131,6 @@ public class DisplayGUI extends JPanel{
                             bwc.writeToFile(file.getName());
                             Analysis.setFn2(file.getName());	
                             Display.setFn2(file.getName());
-                            Filter.setFn2(file.getName());
 
                         } else {
                             log.append("Save command cancelled by user." + newline);
@@ -141,11 +138,32 @@ public class DisplayGUI extends JPanel{
                         log.setCaretPosition(log.getDocument().getLength());
 //                		bwc.writeToFile("cna - Copy.csv");
                         break;
+                    case "Guardian":
+                    	WebCrawlGuardian wcg = new WebCrawlGuardian("https://www.theguardian.com/", textField.getText(), textField_3.getText());
+                    	wcg.getPageLinks("https://www.theguardian.com/",0);
+                		int returnVal3 = fc.showSaveDialog(DisplayGUI.this);
+                        if (returnVal3 == JFileChooser.APPROVE_OPTION) {
+                            File file = fc.getSelectedFile();
+                            String filename = fc.getSelectedFile().toString();
+                            if (!filename .endsWith(".csv"))
+                                 filename += ".csv";
+                            file=new File(filename);
+                            //This is where a real application would save the file.
+                            log.append("Saving: " + file.getName() + "." + newline);
+                            wcg.writeToFile(file.getName());
+                            Analysis.setFn2(file.getName());	
+                            Display.setFn2(file.getName());
+
+                        } else {
+                            log.append("Save command cancelled by user." + newline);
+                        }
+                        log.setCaretPosition(log.getDocument().getLength());
+                        break;
                 }
         	}
         });
         comboBox.setBounds(10, 107, 89, 20);
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"Twitter", "CNA"}));
+        comboBox.setModel(new DefaultComboBoxModel(new String[] {"Twitter", "CNA", "Guardian"}));
         panel_1.add(comboBox);
         
         
@@ -170,34 +188,43 @@ public class DisplayGUI extends JPanel{
         		switch(comboBox_3.getSelectedIndex()){
 	        		case 0:
 	        			WebCrawlerCNA.setMaxPage(100);
-	        			System.out.println("100");
+	        			WebCrawlGuardian.setMaxPage(100);
 	        			break;
 	        		case 1:
 	        			WebCrawlerCNA.setMaxPage(200);
+	        			WebCrawlGuardian.setMaxPage(200);
 	        			break;
 	        		case 2:
 	        			WebCrawlerCNA.setMaxPage(300);
+	        			WebCrawlGuardian.setMaxPage(300);
 	        			break;
 	        		case 3:
 	        			WebCrawlerCNA.setMaxPage(400);
+	        			WebCrawlGuardian.setMaxPage(400);
 	        			break;
 	        		case 4:
 	        			WebCrawlerCNA.setMaxPage(500);
+	        			WebCrawlGuardian.setMaxPage(500);
 	        			break;
 	        		case 5:
 	        			WebCrawlerCNA.setMaxPage(600);
+	        			WebCrawlGuardian.setMaxPage(600);
 	        			break;
 	        		case 6:
 	        			WebCrawlerCNA.setMaxPage(700);
+	        			WebCrawlGuardian.setMaxPage(700);
 	        			break;
 	        		case 7:
 	        			WebCrawlerCNA.setMaxPage(800);
+	        			WebCrawlGuardian.setMaxPage(800);
 	        			break;
 	        		case 8:
 	        			WebCrawlerCNA.setMaxPage(900);
+	        			WebCrawlGuardian.setMaxPage(900);
 	        			break;
 	        		case 9:
 	        			WebCrawlerCNA.setMaxPage(1000);
+	        			WebCrawlGuardian.setMaxPage(1000);
 	        			System.out.println("1000");
 	        			break;
         		}
@@ -308,7 +335,7 @@ public class DisplayGUI extends JPanel{
         	public void actionPerformed(ActionEvent e) {																	//setter for filename, search criteria
         		Analysis.setSc1(textField_1.getText().trim());
         		Analysis.setSc2(textField_2.getText().trim());
-                an = new Analysis();
+        		Analysis an = new Analysis();
             	
             	an.createAndShowGUI();
         	}

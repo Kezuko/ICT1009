@@ -98,7 +98,7 @@ class WebCrawlerCNA extends Crawler implements News{
     				tempArray = URL.split("/");
     				
     				
-    				if(!articleHeader.text().isEmpty()) { // making sure that crawler saves actual data and not empty
+    				if(articleHeader.text().length() != 0) { // making sure that crawler saves actual data and not empty
     					if(tempArray.length >4) {
     						//System.out.println(tempArray[3] + " "+tempArray[4]);
     						this.data.add(new String[]{tempArray[4],articleHeader.text(),articleDate.text()});
