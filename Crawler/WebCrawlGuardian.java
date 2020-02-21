@@ -21,7 +21,7 @@ class WebCrawlGuardian extends Crawler implements News{
     private int visitedPages = 0;
     private static int maxPage = 300;
     private String keyword2;
-    
+    private int counter;
     
     public WebCrawlGuardian(String URL,String key,String key2) {
     	super(key);
@@ -38,6 +38,9 @@ class WebCrawlGuardian extends Crawler implements News{
     	return maxPage;
     }
     
+    public int getCounter() {
+    	return this.counter;
+    }
 
     public void getPageLinks(String URL, int depth)// ,int col_node 
     {
@@ -112,12 +115,14 @@ class WebCrawlGuardian extends Crawler implements News{
 						if(Header.length() != 0 && NewTime.length() !=0)
 							
 							this.data.add(new String[]{tempArray[3],articleHeader.text(),NewTime});
+							this.counter++;
 					}
     				else
     				if(Header.contains(this.keyword)|| Header.contains(this.keyword2))
     				{
     					if(Header.length() != 0 && NewTime.length() != 0)
     						this.data.add(new String[]{tempArray[3],articleHeader.text(),NewTime});//articleDate.text()
+    						this.counter++;
     				}
     				
     					
