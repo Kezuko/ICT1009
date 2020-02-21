@@ -16,7 +16,7 @@ class CrawlWithTJ4 extends Crawler implements Tweet {
 	private static final String con_s="hfX9xdxvppgMIKaeJi2X8fzbood46UNyRJa25yzTQr931OOAmN";
 	private static final String access_T = "285684564-QgwQAfaSgFLwlWNzl6JIpD6WlDCYPyiZsGKfU4Uc";
 	private static final String access_T_S = "Lcx2SpsfGoKaxrtqg3sZOnIHIntfYZJpBMgUkPZGAXoyI";
-	
+	private int counter =0;
 	private final int max_Pages = 3;
 	
 	
@@ -24,6 +24,11 @@ class CrawlWithTJ4 extends Crawler implements Tweet {
 	public CrawlWithTJ4(String kw) {
         super(kw);
     }
+	
+	
+	public int getCounter() {
+		return this.counter;
+	}
 	
 	public void run() 
     { 
@@ -68,10 +73,11 @@ class CrawlWithTJ4 extends Crawler implements Tweet {
 		    	result = twitter.search(query);
 		    for (Status status : result.getTweets()) {
 		    	strDate = dateFormat.format(status.getCreatedAt());  // date format
-			
+		    	
+		    	
 		    	// add to data list.
 				this.data.add(new String[]{"@"+status.getUser().getScreenName(),status.getText(),Integer.toString(status.getRetweetCount()),Integer.toString(status.getFavoriteCount()),strDate});
-				
+				this.counter++;
 		    	
 				// uncomment to display tweets
 		       // System.out.println("@" + status.getUser().getScreenName() + ":" + status.getText());
