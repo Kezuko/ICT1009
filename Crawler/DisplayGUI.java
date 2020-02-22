@@ -19,8 +19,6 @@ import org.jfree.data.general.PieDataset;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-import grp32.Analysis.MyModel;
-
 import java.awt.GridLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -50,21 +48,48 @@ public class DisplayGUI{
 	private JTabbedPane tabbedPane;
 	private JTextField textField_1;
 	private JTextField textField_2;
-	private JTable table;
-	private JScrollPane scrollPane;
+	private JTable table;//for panel 2
+	private JTable inner_table;//for panel 2
+	private JTable inner_table2;//for panel 3
+	private JTable table_panel4;//for panel 4
+	private JTable table2_panel4;//for panel 4
+	private Panel inner_panel_3;//for panel 3
+	private JScrollPane scrollPane;//for panel 2
+	private JScrollPane scrollPane2;//for panel 3
+	private JScrollPane inner_scrollPane2;//for panel 3
+	private JScrollPane inner_scrollPane;//for panel 3	
+	private JScrollPane scrollPane_panel4;//for panel 4
+	private JScrollPane scrollPane2_panel4;//for panel 4
+	private JScrollPane scrollPane_outer_panel4;
+	private JFreeChart chart;//for panel 3
+	private JFreeChart chart2;//for panel 3
+	private JFreeChart lineChart2;//for panel 4
+	private ChartPanel chartPanel4;//for panel 4
+	private JFreeChart lineChart;//for panel 4
+	private ChartPanel chartPanel3;//for panel 4
+	private JFreeChart lineChart3;//for panel 4
+	private ChartPanel chartPanel5;//for panel 4
+	private JFreeChart lineChart4;//for panel 4
+	private ChartPanel chartPanel6;//for panel 4
 	
-	private Display dd;
-//	private Analysis an;
 	private JTextField textField;
 	private JTextField textField_3;
 	private static JTable piechartTable;
-	private static Panel panel_3;
+	private Panel panel_2;
+	private Panel panel_3;
+	private Panel panel_4;
+	private Panel panel_4_outer;
 	
 	private String filenameCSV;
+	private String filenameCSV2;
 	private String searchKeyword1;
 	private String searchKeyword2;
-	private ChartPanel chartPanel;
-	private ChartPanel chartPanel2;
+	private ChartPanel chartPanel;//for panel 3
+	private ChartPanel chartPanel2;//for panel 3
+	private List<String[]> firstFileRt;
+	private List<String[]> firstFileFav;
+	private List<String[]> secondFileRt;
+	private List<String[]> secondFileFav;
 	
 	
 	  private static double posSent;
@@ -84,7 +109,7 @@ public class DisplayGUI{
 //    	super(true);     		    // true = please double buffer
 
 		this.tabbedPane = new JTabbedPane();
-		this.tabbedPane.setBounds(0, 0, 1500, 750);
+		this.tabbedPane.setBounds(0, 0, 1920, 2000);
 		
 		String crawlFromHereLabel = "Crawl from here :";
 		JLabel l = new JLabel(crawlFromHereLabel);
@@ -144,7 +169,8 @@ public class DisplayGUI{
                     case "Twitter":
                     	Tweet crawlTwitter = new CrawlWithTJ4(textField.getText());
                     	crawlTwitter.searchTweets();
-//                    	crawlTwitter.writeToFile("twitter - Copy 5.csv");
+                    	log.append("There is " + Integer.toString(((CrawlWithTJ4)crawlTwitter).getCounter()) + " Number of Tweets crawled");
+                		log.setCaretPosition(log.getDocument().getLength());
                     	int returnVal = fc.showSaveDialog(panel1);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
@@ -155,8 +181,6 @@ public class DisplayGUI{
                             //This is where a real application would save the file.
                             log.append("Saving: " + file.getName() + "." + newline);                            
                             crawlTwitter.writeToFile(file.getName());
-                            Analysis.setFn1(file.getName());	
-                            Display.setFn1(file.getName());
                             
 
                         } else {
@@ -167,6 +191,8 @@ public class DisplayGUI{
                     case "CNA":
                     	WebCrawlerCNA bwc = new WebCrawlerCNA("https://www.channelnewsasia.com/", textField.getText(), textField_3.getText());
                 		bwc.getPageLinks("https://www.channelnewsasia.com/",0);
+                		log.append("There is " + Integer.toString(bwc.getCounter()) + " Number of CNA articles crawled");
+                		log.setCaretPosition(log.getDocument().getLength());
                 		int returnVal2 = fc.showSaveDialog(panel1);
                         if (returnVal2 == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
@@ -177,8 +203,6 @@ public class DisplayGUI{
                             //This is where a real application would save the file.
                             log.append("Saving: " + file.getName() + "." + newline);
                             bwc.writeToFile(file.getName());
-                            Analysis.setFn2(file.getName());	
-                            Display.setFn2(file.getName());
 
                         } else {
                             log.append("Save command cancelled by user." + newline);
@@ -189,6 +213,8 @@ public class DisplayGUI{
                     case "Guardian":
                     	WebCrawlGuardian wcg = new WebCrawlGuardian("https://www.theguardian.com/", textField.getText(), textField_3.getText());
                     	wcg.getPageLinks("https://www.theguardian.com/",0);
+                    	log.append("There is " + Integer.toString(wcg.getCounter()) + " Number of The Guardian articles crawled");
+                		log.setCaretPosition(log.getDocument().getLength());
                 		int returnVal3 = fc.showSaveDialog(panel1);
                         if (returnVal3 == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
@@ -199,8 +225,6 @@ public class DisplayGUI{
                             //This is where a real application would save the file.
                             log.append("Saving: " + file.getName() + "." + newline);
                             wcg.writeToFile(file.getName());
-                            Analysis.setFn2(file.getName());	
-                            Display.setFn2(file.getName());
 
                         } else {
                             log.append("Save command cancelled by user." + newline);
@@ -286,36 +310,18 @@ public class DisplayGUI{
         lblNewLabel_3.setBounds(10, 87, 204, 14);
         panel_1.add(lblNewLabel_3);
         
-        JLabel lblNumberOfPages = new JLabel("Number of pages to query(for CNA)");
-        lblNumberOfPages.setBounds(10, 138, 225, 14);
+        JLabel lblNumberOfPages = new JLabel("Number of pages to query(for CNA and Guardian ONLY, not for Twitter)");
+        lblNumberOfPages.setBounds(10, 138, 439, 14);
         panel_1.add(lblNumberOfPages);
         
         
-        Panel panel_2 = new Panel();
+        panel_2 = new Panel();
         panel_2.setBounds(0, 0, 1500, 750);
         this.tabbedPane.addTab("Display", null, panel_2, null);
         panel_2.setLayout(null);
         
-        JLabel lblShowResultIn = new JLabel("2. Show result in a ");
-        lblShowResultIn.setBounds(10, 45, 163, 14);
-        panel_2.add(lblShowResultIn);
-        
-        JButton btnFiletoJTable = new JButton("New window");
-        btnFiletoJTable.setBounds(208, 41, 122, 23);
-        btnFiletoJTable.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent arg0) {
-        		searchKeyword1 = "";
-        		searchKeyword2 = "";
-        		displayJTable(panel_2, 2);
-//        		dd = new Display();
-//        		dd.createAndShowGUI();
-        	}
-        });
-        
-        panel_2.add(btnFiletoJTable);
-        
         JButton btnNewButton_2 = new JButton("Browse");
-        btnNewButton_2.setBounds(208, 5, 93, 23);
+        btnNewButton_2.setBounds(263, 7, 93, 23);
         btnNewButton_2.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int returnVal = fc.showOpenDialog(panel1);
@@ -323,83 +329,52 @@ public class DisplayGUI{
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     //This is where a real application would open the file.
-                    Display.setFn1(file.getName());
                     filenameCSV = file.getName();
+                    searchKeyword1 = "";
+            		searchKeyword2 = "";
+            		displayJTable(2,0);
                 }
         	}
         });
         panel_2.add(btnNewButton_2);
         
-        JButton btnNewButton_3 = new JButton("Browse");
-        btnNewButton_3.setBounds(208, 75, 93, 23);
-        btnNewButton_3.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		int returnVal = fc.showOpenDialog(panel1);
-       		 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    //This is where a real application would open the file.
-                    Display.setFn2(file.getName());
-                    filenameCSV = file.getName();
-                }
-        	}
-        });
-        panel_2.add(btnNewButton_3);
-        
-        JLabel lblNewLabel_4 = new JLabel("1. ");
-        lblNewLabel_4.setBounds(10, 9, 22, 14);
+        JLabel lblNewLabel_4 = new JLabel("1. Browse the csv file you want to view");
+        lblNewLabel_4.setBounds(10, 9, 243, 14);
         panel_2.add(lblNewLabel_4);
         
-        JLabel label = new JLabel("3. ");
-        label.setBounds(10, 79, 22, 14);
-        panel_2.add(label);
+        JButton btnNewButton_3 = new JButton("Clear All");
+        btnNewButton_3.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		panel_2.remove(scrollPane);
+        		panel_2.revalidate();
+        		panel_2.repaint();
+        	}
+        });
+        btnNewButton_3.setBounds(263, 49, 93, 23);
+        panel_2.add(btnNewButton_3);
         
-        JLabel lblShowResult = new JLabel("4. Show result in a ");
-        lblShowResult.setBounds(10, 109, 177, 14);
-        panel_2.add(lblShowResult);
-        
-        JButton button = new JButton("New window");
-        button.setBounds(208, 105, 122, 23);
-        panel_2.add(button);
+        JLabel lblNewLabel_5 = new JLabel("2. Clear All to view more csv file");
+        lblNewLabel_5.setBounds(10, 52, 198, 14);
+        panel_2.add(lblNewLabel_5);
         
         
         panel_3 = new Panel();
-        panel_3.setBounds(0, 0, 2000, 1000);
+        panel_3.setBounds(0, 0, 1920, 2000);
         this.tabbedPane.addTab("Search", null, panel_3, null);
         panel_3.setLayout(null);
         
         textField_1 = new JTextField();
-        textField_1.setBounds(175, 59, 86, 20);
+        textField_1.setBounds(138, 31, 292, 20);
         panel_3.add(textField_1);
         textField_1.setColumns(10);
         
         textField_2 = new JTextField();
-        textField_2.setBounds(175, 90, 86, 20);
+        textField_2.setBounds(138, 59, 292, 20);
         panel_3.add(textField_2);
         textField_2.setColumns(10);
         
-        JLabel lblShowResultIn_1 = new JLabel("5. Show result in a");
-        lblShowResultIn_1.setBounds(10, 178, 158, 14);
-        panel_3.add(lblShowResultIn_1);
-        
-        JButton btnOpenCSV = new JButton("New window");
-        btnOpenCSV.setBounds(178, 174, 124, 23);
-        btnOpenCSV.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {																	//setter for filename, search criteria
-        		Analysis.setSc1(textField_1.getText().trim());
-        		Analysis.setSc2(textField_2.getText().trim());
-//        		Analysis an = new Analysis();
-//            	an.analyse();
-//            	an.createAndShowGUI();
-            	searchKeyword1 = textField_1.getText().trim();
-            	searchKeyword2 = textField_2.getText().trim();
-            	analyse();
-        	}
-        });
-        panel_3.add(btnOpenCSV);
-        
         JButton btnNewButton_4 = new JButton("Browse");
-        btnNewButton_4.setBounds(173, 5, 88, 23);
+        btnNewButton_4.setBounds(369, 86, 88, 23);
         btnNewButton_4.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		int returnVal = fc.showOpenDialog(panel1);
@@ -407,8 +382,11 @@ public class DisplayGUI{
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     //This is where a real application would open the file.
-                    Analysis.setFn1(file.getName());
                     filenameCSV = file.getName();
+                    searchKeyword1 = textField_1.getText().trim();
+                	searchKeyword2 = textField_2.getText().trim();
+                	displayJTable(3,1);
+                	analyse(1);
                 }
         		
         	}
@@ -416,7 +394,7 @@ public class DisplayGUI{
         panel_3.add(btnNewButton_4);
         
         JButton btnNewButton_5 = new JButton("Browse");
-        btnNewButton_5.setBounds(175, 120, 86, 23);
+        btnNewButton_5.setBounds(371, 154, 86, 23);
         btnNewButton_5.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int returnVal = fc.showOpenDialog(panel1);
@@ -424,64 +402,153 @@ public class DisplayGUI{
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     //This is where a real application would open the file.
-                    Analysis.setFn2(file.getName());
                     filenameCSV = file.getName();
-                    secondAnalysis();
+                    searchKeyword1 = textField_1.getText().trim();
+                	searchKeyword2 = textField_2.getText().trim();
+                    displayJTable(3,2);
+                    analyse(2);
+                    
                 }
         	}
         });
         panel_3.add(btnNewButton_5);
         
-        JLabel label_1 = new JLabel("1. ");
-        label_1.setBounds(10, 9, 13, 14);
-        panel_3.add(label_1);
+        JLabel lblBrowseThe_2 = new JLabel("2. Browse the csv file you want to perform sentiment analysis");
+        lblBrowseThe_2.setBounds(10, 90, 322, 14);
+        panel_3.add(lblBrowseThe_2);
         
-        JLabel lblEnterThe = new JLabel("2. Enter the keyword(s) you to search");
-        lblEnterThe.setBounds(10, 39, 292, 20);
+        JLabel lblEnterThe = new JLabel("1. Enter the keyword(s) you to search");
+        lblEnterThe.setBounds(10, 6, 292, 20);
         panel_3.add(lblEnterThe);
         
         JLabel lblFirstKeyword = new JLabel("First keyword:");
-        lblFirstKeyword.setBounds(10, 62, 143, 14);
+        lblFirstKeyword.setBounds(10, 34, 143, 14);
         panel_3.add(lblFirstKeyword);
         
         JLabel lblSecondKeyword = new JLabel("Second keyword:");
-        lblSecondKeyword.setBounds(10, 93, 143, 14);
+        lblSecondKeyword.setBounds(10, 62, 143, 14);
         panel_3.add(lblSecondKeyword);
         
-        JLabel label_2 = new JLabel("3. ");
-        label_2.setBounds(10, 124, 13, 14);
-        panel_3.add(label_2);
+        JLabel lblBrowseThe_3 = new JLabel("4. Browse the next file you want to perform sentiment analysis");
+        lblBrowseThe_3.setBounds(10, 158, 331, 14);
+        panel_3.add(lblBrowseThe_3);
         
-        JLabel lblEnterThe_1 = new JLabel("4. Change the keywords in step 2");
-        lblEnterThe_1.setBounds(10, 151, 292, 20);
+        JLabel lblEnterThe_1 = new JLabel("3. Change the keywords in step 1");
+        lblEnterThe_1.setBounds(10, 121, 292, 20);
         panel_3.add(lblEnterThe_1);
         
-        
-        
-//        this.ButtonOpen = new JPanel(new FlowLayout(FlowLayout.CENTER));
-//        this.ButtonOpen.add(ButtonOpen, BorderLayout.SOUTH);
-        
-        JButton btnNewButton = new JButton("New button");
+        JButton btnNewButton = new JButton("Refresh Group 32");
         btnNewButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
-        		StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();
-            	PieChart example = new PieChart(filenameCSV);
-                example.setSize(800, 400);
-                example.setBounds(1501, 0, 1500, 750);
-                example.setLocationRelativeTo(null);
-                example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                example.setVisible(true);
+        		inner_panel_3.remove(inner_scrollPane);
+        		inner_panel_3.remove(inner_scrollPane2);
+        		inner_panel_3.remove(chartPanel);
+        		inner_panel_3.remove(chartPanel2);
+        		inner_panel_3.revalidate();
+        		inner_panel_3.repaint();
         	}
         });
+        btnNewButton.setBounds(299, 190, 158, 23);
         panel_3.add(btnNewButton);
         
-
-//        add(scrollPane, BorderLayout.CENTER);
-
-//        this.ButtonOpen.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.inner_panel_3 = new Panel();
+        this.inner_panel_3.setBounds(550, 0, 1420, 2000);
+        this.inner_panel_3.setLayout(null);
+        
+        this.scrollPane2 = new JScrollPane();
+        this.scrollPane2 = new JScrollPane(this.inner_panel_3);
+        this.scrollPane2.setBounds(550, 0, 1420, 1080);
+        panel_3.add(this.scrollPane2);
+        
+        JLabel lblNewLabel_1 = new JLabel("6. Clear All to perform more sentiment analysis");
+        lblNewLabel_1.setBounds(10, 194, 240, 14);
+        panel_3.add(lblNewLabel_1);
+        
+        panel_4 = new Panel();
+        tabbedPane.addTab("Statistics", null, panel_4, null);
+        panel_4.setLayout(null);
+        
+        JLabel lblBrowseThe = new JLabel("1. Browse the first Top 10 Retweet and Favourites you want to compare");
+        lblBrowseThe.setBounds(10, 11, 389, 14);
+        panel_4.add(lblBrowseThe);
+        
+        JButton btnNewButton_1 = new JButton("Browse");
+        btnNewButton_1.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int returnVal = fc.showOpenDialog(panel1);
+         		 
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    //This is where a real application would open the file.
+                    filenameCSV = file.getName();                   
+                    displayJTable(4, 1);
+                    panel_4_outer.revalidate();
+     		      	panel_4_outer.repaint();
+                }
+       		      
+//       		   lineChart2 = ChartFactory.createLineChart(
+//      		         filenameCSV,
+//      		         "Username","Number of Schools",
+//      		         createStatisticDataset(),
+//      		         PlotOrientation.VERTICAL,
+//      		         true,true,false);
+//      		         
+//      		      chartPanel4 = new ChartPanel( lineChart2 );
+//      		      chartPanel4.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
+//      		      chartPanel4.setBounds(620, 110, 560, 367);
+//      		      panel_4.add( chartPanel4 );
+        	}
+        });
+        btnNewButton_1.setBounds(438, 7, 105, 23);
+        panel_4.add(btnNewButton_1);
+        
+        JLabel lblBrowseThe_1 = new JLabel("2. Browse the next Top 10 Retweet and Favourites you want to compare");
+        lblBrowseThe_1.setBounds(10, 36, 409, 14);
+        panel_4.add(lblBrowseThe_1);
+        
+        JButton btnNewButton_6 = new JButton("Browse");
+        btnNewButton_6.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int returnVal = fc.showOpenDialog(panel1);
+        		 
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    //This is where a real application would open the file.
+                    filenameCSV = file.getName();
+    				displayJTable(4, 2);
+     		      	panel_4_outer.revalidate();
+     		      	panel_4_outer.repaint();
+                }
+//        		
+        	}
+        });
+        btnNewButton_6.setBounds(438, 32, 105, 23);
+        panel_4.add(btnNewButton_6);
+        
+        JLabel lblClearAll = new JLabel("3. Clear all to continue comparing other csv files");
+        lblClearAll.setBounds(10, 61, 345, 14);
+        panel_4.add(lblClearAll);
+        
+        JButton btnNewButton_7 = new JButton("Clear All");
+        btnNewButton_7.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		panel_4_outer.remove(scrollPane_panel4);
+        		panel_4_outer.remove(scrollPane2_panel4);
+        		panel_4_outer.revalidate();
+        		panel_4_outer.repaint();
+        	}
+        });
+        btnNewButton_7.setBounds(438, 57, 105, 23);
+        panel_4.add(btnNewButton_7);
+        
+        panel_4_outer = new Panel();
+        panel_4_outer.setBounds(0, 0, 950, 2000);
         
         
-        //analyse();
+        scrollPane_outer_panel4 = new JScrollPane(this.panel_4_outer);
+        panel_4_outer.setLayout(null);
+        scrollPane_outer_panel4.setBounds(550, 0, 950, 1080);
+        panel_4.add(scrollPane_outer_panel4);
     }
     
     private PieDataset createDataset() {
@@ -569,20 +636,25 @@ public class DisplayGUI{
         }
     }
     
-    public void displayJTable(Panel jpanelNumber, int jpanelNo){
+    public void displayJTable(int jpanelNo, int innerPanelNo){
     	DisplayModel NewModel;
         NewModel = new DisplayModel();
         SentimentModel NewModel2;
         NewModel2 = new SentimentModel();
+        SentimentModel NewModel3;
+        NewModel3 = new SentimentModel();
+        DisplayModel NewModel4;
+        NewModel4 = new DisplayModel();
+        DisplayModel NewModel5;
+        NewModel5 = new DisplayModel();
 //        this.table.setModel(NewModel);
 
         
-        ArrayList<String[]> Rs2 = new ArrayList<>();
-        ArrayList<String> Rs3 = new ArrayList<>();
-//        MyModel NewModel;
-//        NewModel = new MyModel();
-//        File DataFile;
-//        DataFile = new File(filenameCSV);
+        ArrayList<String[]> Rs2 = new ArrayList<>();//for panel 2     
+        ArrayList<String> Rs3 = new ArrayList<>();//for panel 3, inner panel l
+        ArrayList<String> Rs4 = new ArrayList<>();//for panel 3, inner panel 2
+        ArrayList<String[]> Rs5 = new ArrayList<>();//for panel 4, inner panel 1
+        ArrayList<String[]> Rs6 = new ArrayList<>();//for panel 4, inner panel 2
 
         try {
 
@@ -591,186 +663,301 @@ public class DisplayGUI{
             // create csvReader object and skip first Line 
             CSVReader csvReader = new CSVReaderBuilder(filereader).build(); 
             String[] temp = csvReader.readNext();
-            if(jpanelNo==2){NewModel.setColumnNames(temp);}
-            else{
-            	NewModel2.setColumnNames(temp[1]);
-            	StanfordCoreNlpDemo.setSentimentTableHeader(temp[1]);}
+            if(jpanelNo==2){
+            	NewModel.setColumnNames(temp);
+        	}
+            else if (jpanelNo==3){
+            	if(innerPanelNo==1){
+            		NewModel2.setColumnNames(temp[1]);
+            	}
+            	else if(innerPanelNo==2){
+            		NewModel3.setColumnNames(temp[1]);
+            	}
+            		
+            	//StanfordCoreNlpDemo.setSentimentTableHeader(temp[1]);
+        	}
+            else if (jpanelNo==4){
+            	String[] statsHeader = new String[4];
+            	statsHeader[0] = "Username with Top 10 Retweets Ranking";
+            	statsHeader[1] = "Retweets Count";
+            	statsHeader[2] = "Username with Top 10 Favourites Ranking";
+            	statsHeader[3] = "Favourites Count";
+            	if (innerPanelNo == 1)
+            		NewModel4.setColumnNames(statsHeader);
+            	else if (innerPanelNo == 2)
+            		NewModel5.setColumnNames(statsHeader);
+            }
+            
             List<String[]> allData = csvReader.readAll();
             
             String regex = "^(?=.*\\b"+searchKeyword1+"\\b)(?=.*\\b"+searchKeyword2+"\\b).*$";
             Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
             
-            for (String[] row : allData) { 
-            	//if (row == null){
-                // Arrays.sort(row[1]);
-	                
-               // }
-            	//else{
-            //		if(row[1].toLowerCase().contains(sc1.toLowerCase()) && row[1].toLowerCase().contains(sc2.toLowerCase())){		//sc1 = "wuhan", sc2 = "singapore"
-            		Matcher matcher = pattern.matcher(row[1]);
-            		if(matcher.matches()){
-            			if (jpanelNo == 3){Rs3.add(row[1]); }
-            			else{Rs2.add(row); }
-            			StanfordCoreNlpDemo.setLine(row[1]);
-	                	
-            		}
-//	                    System.out.println(row);
-	                	
+            if (jpanelNo==3){
+	            for (String[] row : allData) { 
+	            	Matcher matcher = pattern.matcher(row[1]);
+	            		if(matcher.matches()){
+	            			if (jpanelNo == 2){
+	            				Rs2.add(row); 
+	        				}
+	            			else{
+		            				if(innerPanelNo==1){
+		            					Rs3.add(row[1]); 
+		            				}
+		            				else if (innerPanelNo==2){
+		            					Rs4.add(row[1]);
+		            				}
+	        				}
+	            			StanfordCoreNlpDemo.setLine(row[1]);
+		                	
+	            		}
 
-            //		}
-        		//}
+	            }
+            }
+            else{
+            	if (jpanelNo == 4){
+
+    				Stats statsBodyList = new Stats(filenameCSV);
+    				statsBodyList.FindTop10RT(); // find top 10 retweeted tweets
+    				statsBodyList.FindTop10Fav(); 
+    				List<String[]> rtList = statsBodyList.getTop10RT();
+    				List<String[]> favList = statsBodyList.getTop10Fav();
+    				for (int i = 0; i < 10; i++){
+        				if (innerPanelNo == 1)
+        					Rs5.add(new String[] { rtList.get(i)[0], rtList.get(i)[2], favList.get(i)[0], favList.get(i)[3] });
+        				else if (innerPanelNo == 2)
+        					Rs6.add(new String[] { rtList.get(i)[0], rtList.get(i)[2], favList.get(i)[0], favList.get(i)[3] });
+    				}
+    				
+				}
+            	else if (jpanelNo == 2)
+            	{
+		        	for (String[] row : allData) { 
+		    				Rs2.add(row); 	
+		            }
+            	}
             }
             if(jpanelNo == 2){
 	            System.out.println("Rs2 = " + Rs2);
-	            
-	            
+     
 	            NewModel.AddCSVData(Rs2);
 	            NewModel.refresh();
 	            
 	            this.table = new JTable(NewModel);
 	            
 	            this.table.setModel(NewModel);
-            }
-            else{
-        		System.out.println("Rs3 = " + Rs3);
+	            this.table.setBounds(0, 0, 1420, 750);
+	            this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
+	            this.table.setFillsViewportHeight(true);
 	            
+	            this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
+	            this.table.setFillsViewportHeight(true);
 	            
-	            NewModel2.AddSentimentAnalysis(Rs3);
-	            NewModel2.refresh();
+//	            this.inner_panel_3 = new Panel();
+//	            this.inner_panel_3.setBounds(500, 0, 1420, 2000);
+//	            this.inner_panel_3.setLayout(null);
 	            
-	            this.table = new JTable(NewModel2);
+	            this.scrollPane = new JScrollPane(this.table);
+	            this.scrollPane.setBounds(550, 0, 1420, 800);
 	            
-	            this.table.setModel(NewModel2);
-            }
-            this.table.setBounds(0, 0, 1500, 750);
-            this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
-            this.table.setFillsViewportHeight(true);
-            
-            
-            this.scrollPane = new JScrollPane(this.table);
-            this.scrollPane.setBounds(500, 0, 1420, 900);
-            jpanelNumber.add(this.scrollPane);
-            jpanelNumber.revalidate();
-            jpanelNumber.repaint();
-            
-            TableRowSorter<TableModel> sorter;
-            sorter = new TableRowSorter<>(this.table.getModel());																	//start sort
-            this.table.setRowSorter(sorter);
-            List<RowSorter.SortKey> sortKeys;
-            sortKeys = new ArrayList<>();
-             
-            int columnIndexToSort = 1;
-            if(jpanelNo==2){
-	            while (columnIndexToSort <NewModel.getColumnCount()){
+	            this.panel_2.add(this.scrollPane);
+//	            this.scrollPane = new JScrollPane(this.inner_panel_3);
+//	            this.scrollPane.setBounds(500, 0, 1420, 1080);
+//	            panel_2.add(this.scrollPane);
+//	            panel_2.revalidate();
+//	            panel_2.repaint();
+	            
+	            TableRowSorter<TableModel> sorter;
+	            sorter = new TableRowSorter<>(this.table.getModel());																	//start sort
+	            this.table.setRowSorter(sorter);
+	            List<RowSorter.SortKey> sortKeys;
+	            sortKeys = new ArrayList<>();
+	             
+	            int columnIndexToSort = 1;
+
+	            while (columnIndexToSort < NewModel.getColumnCount()){
 	            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
 	            }
-            }
-            else{
-            	while (columnIndexToSort <NewModel2.getColumnCount()){
-	            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
-	            }
-            }
-             
-            sorter.setSortKeys(sortKeys);
-            sorter.sort();
-            
-//            this.scrollPane = new JScrollPane(this.table);
-//            this.panel_3.add(this.scrollPane);
-            
-            if(jpanelNo==2)
+
+	             
+	            sorter.setSortKeys(sortKeys);
+	            sorter.sort();
+	            
+
             	NewModel.refresh();
-            else
-            	NewModel2.refresh();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    
-    public void secondAnalysis(){
-//    	DisplayModel NewModel;
-//        NewModel = new DisplayModel();
 
-        ArrayList<String[]> Rs2 = new ArrayList<>();
+            }
+            else if (jpanelNo == 3){
+            	if(innerPanelNo==1){
+	        		System.out.println("Rs3 = " + Rs3);
+	
+		            NewModel2.AddSentimentAnalysis(Rs3);
+		            NewModel2.refresh();
+		              
+		            this.inner_table = new JTable(NewModel2);
+		            this.inner_table.setBounds(0, 0, 900, 500);
+		            
+		            this.inner_table.setModel(NewModel2);
+		            this.inner_table.setPreferredScrollableViewportSize(new Dimension(700, 70));
+		            this.inner_table.setFillsViewportHeight(true);
+		            
+//		            this.inner_panel_3 = new Panel();
+//		            this.inner_panel_3.setBounds(500, 0, 1420, 2000);
+//		            this.inner_panel_3.setLayout(null);
+		            
+		            this.inner_scrollPane = new JScrollPane(this.inner_table);
+		            this.inner_scrollPane.setBounds(450, 0, 950, 500);
+		            
+		            this.inner_panel_3.add(this.inner_scrollPane);
+//		            this.scrollPane2 = new JScrollPane(this.inner_panel_3);
+//		            this.scrollPane2.setBounds(500, 0, 1420, 1080);
+//		            panel_3.add(this.scrollPane2);
 
-        try {
+		            
+		            TableRowSorter<TableModel> sorter;
+		            sorter = new TableRowSorter<>(this.inner_table.getModel());																	//start sort
+		            this.inner_table.setRowSorter(sorter);
+		            List<RowSorter.SortKey> sortKeys;
+		            sortKeys = new ArrayList<>();
+		             
+		            int columnIndexToSort = 1;
+		            
+	            	while (columnIndexToSort <NewModel2.getColumnCount()){
+		            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+		            }
 
-            FileReader filereader = new FileReader(filenameCSV); 
+		            sorter.setSortKeys(sortKeys);
+		            sorter.sort();
+		            
 
-            // create csvReader object and skip first Line 
-            CSVReader csvReader = new CSVReaderBuilder(filereader).build(); 
-            String[] temp = csvReader.readNext();
-//            NewModel.setColumnNames(temp);
-            List<String[]> allData = csvReader.readAll();
-            
-            String regex = "^(?=.*\\b"+searchKeyword1+"\\b)(?=.*\\b"+searchKeyword2+"\\b).*$";
-            Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
-            
-            for (String[] row : allData) { 
-            	//if (row == null){
-                // Arrays.sort(row[1]);
-	                
-               // }
-            	//else{
-            //		if(row[1].toLowerCase().contains(sc1.toLowerCase()) && row[1].toLowerCase().contains(sc2.toLowerCase())){		//sc1 = "wuhan", sc2 = "singapore"
-            		Matcher matcher = pattern.matcher(row[1]);
-            		if(matcher.matches()){
-//            			Rs2.add(row); 
-            			StanfordCoreNlpDemo.setLine(row[1]);
-	                	
+	            	NewModel2.refresh();
+            	}
+            	else if(innerPanelNo==2){
+            		System.out.println("Rs4 = " + Rs4);
+            		
+		            NewModel3.AddSentimentAnalysis(Rs4);
+		            NewModel3.refresh();
+  
+		            this.inner_table2 = new JTable(NewModel3);
+		            this.inner_table2.setBounds(0, 0, 900, 500);
+		            
+		            this.inner_table2.setModel(NewModel3);
+		            this.inner_table2.setPreferredScrollableViewportSize(new Dimension(700, 70));
+		            this.inner_table2.setFillsViewportHeight(true);
+		            
+//		            this.inner_panel_3 = new Panel();
+//		            this.inner_panel_3.setBounds(500, 0, 1420, 2000);
+//		            this.inner_panel_3.setLayout(null);
+		            
+		            this.inner_scrollPane2 = new JScrollPane(this.inner_table2);
+		            this.inner_scrollPane2.setBounds(450, 550, 950, 500);
+		            
+		            this.inner_panel_3.add(this.inner_scrollPane2);
+//		            this.scrollPane2 = new JScrollPane(this.inner_panel_3);
+//		            this.scrollPane2.setBounds(500, 0, 1420, 1080);
+//		            panel_3.add(this.scrollPane2);
+//		            panel_3.revalidate();
+//		            panel_3.repaint();
+		            
+		            TableRowSorter<TableModel> sorter;
+		            sorter = new TableRowSorter<>(this.inner_table2.getModel());																	//start sort
+		            this.inner_table2.setRowSorter(sorter);
+		            List<RowSorter.SortKey> sortKeys;
+		            sortKeys = new ArrayList<>();
+		             
+		            int columnIndexToSort = 1;
+		            
+	            	while (columnIndexToSort < NewModel3.getColumnCount()){
+		            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+		            }
+
+		            sorter.setSortKeys(sortKeys);
+		            sorter.sort();
+
+	            	NewModel3.refresh();
+            	}
+	            
+            }
+            else if (jpanelNo == 4){
+            	if(innerPanelNo == 1){
+            		for (int i = 0; i < 10; i++){
+            			System.out.println("Rs5 = "+ i + "," + Rs5.get(i)[0] + "," + Rs5.get(i)[1] + "," + Rs5.get(i)[2] + "," + Rs5.get(i)[3]);
             		}
-//	                    System.out.println(row);
-	                	
+	            	
+	            	
+		            NewModel4.AddCSVData(Rs5);
+//		            NewModel4.refresh();
+		              
+		            this.table_panel4 = new JTable(NewModel4);
+		            this.table_panel4.setBounds(0, 0, 900, 500);
+		            
+		            this.table_panel4.setModel(NewModel4);
+		            this.table_panel4.setPreferredScrollableViewportSize(new Dimension(700, 70));
+		            this.table_panel4.setFillsViewportHeight(true);	            
+		            
+		            this.scrollPane_panel4 = new JScrollPane(this.table_panel4);
+		            this.scrollPane_panel4.setBounds(0, 0, 950, 500);
+		            
+		            this.panel_4_outer.add(this.scrollPane_panel4);
+//		            this.panel_4.add(this.scrollPane_panel4);
+		            
+		            TableRowSorter<TableModel> sorter;
+		            sorter = new TableRowSorter<>(this.table_panel4.getModel());																	//start sort
+		            this.table_panel4.setRowSorter(sorter);
+		            List<RowSorter.SortKey> sortKeys;
+		            sortKeys = new ArrayList<>();
+		             
+		            int columnIndexToSort = 1;
+		            
+	            	while (columnIndexToSort < NewModel4.getColumnCount()){
+		            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+		            }
+	
+		            sorter.setSortKeys(sortKeys);
+		            sorter.sort();
+		            
+	
+	            	NewModel4.refresh();
+            	}
+            	else if (innerPanelNo == 2){
+            		System.out.println("Rs6 = " + Rs6);
+                	
+    	            NewModel5.AddCSVData(Rs6);
+    	            NewModel5.refresh();
+    	              
+    	            this.table2_panel4 = new JTable(NewModel5);
+    	            this.table2_panel4.setBounds(0, 0, 900, 500);
+    	            
+    	            this.table2_panel4.setModel(NewModel5);
+    	            this.table2_panel4.setPreferredScrollableViewportSize(new Dimension(700, 70));
+    	            this.table2_panel4.setFillsViewportHeight(true);	            
+    	            
+    	            this.scrollPane2_panel4 = new JScrollPane(this.table2_panel4);
+    	            this.scrollPane2_panel4.setBounds(0, 550, 950, 500);
+    	            
+    	            panel_4_outer.add(scrollPane2_panel4);
+//    	            this.panel_4.add(this.scrollPane2_panel4);
+    	            
+    	            TableRowSorter<TableModel> sorter;
+    	            sorter = new TableRowSorter<>(this.table2_panel4.getModel());																	//start sort
+    	            this.table2_panel4.setRowSorter(sorter);
+    	            List<RowSorter.SortKey> sortKeys;
+    	            sortKeys = new ArrayList<>();
+    	             
+    	            int columnIndexToSort = 1;
+    	            
+                	while (columnIndexToSort < NewModel5.getColumnCount()){
+    	            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+    	            }
 
-            //		}
-        		//}
+    	            sorter.setSortKeys(sortKeys);
+    	            sorter.sort();
+    	            
+
+                	NewModel5.refresh();
+            	}
             }
 
-//            System.out.println("Rs2 = " + Rs2);
-//            
-//            
-//            NewModel.AddCSVData(Rs2);
-//            NewModel.refresh();
-            
-//            this.table = new JTable(NewModel);
-//            
-//            this.table.setModel(NewModel);
-//           
-//            this.table.setBounds(0, 0, 1500, 750);
-//            this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
-//            this.table.setFillsViewportHeight(true);
-            
-            
-//            this.scrollPane = new JScrollPane(this.table);
-//            this.scrollPane.setBounds(500, 0, 1420, 900);
-//            panel_3.add(this.scrollPane);
-//            panel_3.revalidate();
-//            panel_3.repaint();
-//            
-//            TableRowSorter<TableModel> sorter;
-//            sorter = new TableRowSorter<>(this.table.getModel());																	//start sort
-//            this.table.setRowSorter(sorter);
-//            List<RowSorter.SortKey> sortKeys;
-//            sortKeys = new ArrayList<>();
-//             
-//            int columnIndexToSort = 1;
-//
-//            while (columnIndexToSort <NewModel.getColumnCount()){
-//            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
-//            }
-//  
-//            sorter.setSortKeys(sortKeys);
-//            sorter.sort();
-            
-//            this.scrollPane = new JScrollPane(this.table);
-//            this.panel_3.add(this.scrollPane);
-            
-
-//        	NewModel.refresh();
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -780,161 +967,51 @@ public class DisplayGUI{
         }
     }
     
-    public void compare(){
-    	secondAnalysis();
-    	StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();
-  
-        PieDataset dataset = createDataset();
+    public void analyse(int innerPanelNo){
 
-        // Create chart
-        JFreeChart chart = ChartFactory.createPieChart(
-            filenameCSV+ " Sentiment Analysis",
-            dataset,
-            true, 
-            true,
-            false);
-
-        //Format Label
-        PieSectionLabelGenerator labelGenerator = new StandardPieSectionLabelGenerator(
-            "{0} : ({2})", new DecimalFormat("0"), new DecimalFormat("0%"));
-        ((PiePlot) chart.getPlot()).setLabelGenerator(labelGenerator);
+        StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();      
         
-        // Create Panel
-        chartPanel2 = new ChartPanel(chart);
-        chartPanel2.setSize(800, 400);
-        chartPanel2.setBounds(400,400, 400, 400);
-        chartPanel2.setVisible(true);
-//        this.scrollPane.remove(this.table);
-        panel_3.remove(this.scrollPane);
-        panel_3.add(chartPanel2);
-//        panel_3.repaint();
-//        panel_3.revalidate();
-        this.scrollPane.removeAll();
-        this.scrollPane.setViewportView(chartPanel2);
-        this.scrollPane.add(chartPanel2);
-        this.scrollPane.revalidate();
-        panel_3.revalidate();
-        panel_3.repaint();
-    }
-    
-    public void analyse(){
-    	
-//    	MyModel NewModel;
-//        NewModel = new MyModel();
-////        this.table.setModel(NewModel);
-//
-//        
-//        ArrayList<String[]> Rs2 = new ArrayList<>();
-////        MyModel NewModel;
-////        NewModel = new MyModel();
-////        File DataFile;
-////        DataFile = new File(filenameCSV);
-//
-//        try {
-//
-//            FileReader filereader = new FileReader(filenameCSV); 
-//
-//            // create csvReader object and skip first Line 
-//            CSVReader csvReader = new CSVReaderBuilder(filereader).build(); 
-//            String[] temp = csvReader.readNext();
-//            NewModel.setColumnNames(temp);
-//            List<String[]> allData = csvReader.readAll();
-//            
-//            String regex = "^(?=.*\\b"+searchKeyword1+"\\b)(?=.*\\b"+searchKeyword2+"\\b).*$";
-//            Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
-//            
-//            for (String[] row : allData) { 
-//            	//if (row == null){
-//                // Arrays.sort(row[1]);
-//	                
-//               // }
-//            	//else{
-//            //		if(row[1].toLowerCase().contains(sc1.toLowerCase()) && row[1].toLowerCase().contains(sc2.toLowerCase())){		//sc1 = "wuhan", sc2 = "singapore"
-//            		Matcher matcher = pattern.matcher(row[1]);
-//            		if(matcher.matches()){
-//            			Rs2.add(row);
-//	                	StanfordCoreNlpDemo.setLine(row[1]);
-//            		}
-////	                    System.out.println(row);
-//	                	
-//
-//            //		}
-//        		//}
-//            }
-//            System.out.println("Rs2 = " + Rs2);
-//            
-//            
-//            NewModel.AddCSVData(Rs2);
-//            NewModel.refresh();
-//            
-//            this.table = new JTable(NewModel);
-//            this.table.setBounds(0, 0, 1500, 750);
-//            this.table.setPreferredScrollableViewportSize(new Dimension(700, 70));
-//            this.table.setFillsViewportHeight(true);
-//            this.table.setModel(NewModel);
-//            
-//            this.scrollPane = new JScrollPane(this.table);
-//            this.scrollPane.setBounds(500, 0, 1420, 900);
-//            panel_3.add(this.scrollPane);
-//            panel_3.revalidate();
-//            panel_3.repaint();
-//            
-//            TableRowSorter<TableModel> sorter;
-//            sorter = new TableRowSorter<>(this.table.getModel());																	//start sort
-//            this.table.setRowSorter(sorter);
-//            List<RowSorter.SortKey> sortKeys;
-//            sortKeys = new ArrayList<>();
-//             
-//            int columnIndexToSort = 1;
-//            while (columnIndexToSort <NewModel.getColumnCount()){
-//            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
-//            }
-//             
-//            sorter.setSortKeys(sortKeys);
-//            sorter.sort();
-            
-//            this.scrollPane = new JScrollPane(this.table);
-//            this.panel_3.add(this.scrollPane);
-            
-    		displayJTable(panel_3, 3);
-    	
-//            NewModel.refresh();
-            
-            StanfordCoreNlpDemo nlp = new StanfordCoreNlpDemo();
-            
-            
-            PieDataset dataset = createDataset();
-
-            // Create chart
-            JFreeChart chart = ChartFactory.createPieChart(
+        PieDataset dataset = createDataset();
+        if(innerPanelNo==1){
+        // Create chart
+            chart = ChartFactory.createPieChart(
                 filenameCSV+ " Sentiment Analysis",
                 dataset,
                 true, 
                 true,
                 false);
-
-            //Format Label
             PieSectionLabelGenerator labelGenerator = new StandardPieSectionLabelGenerator(
-                "{0} : ({2})", new DecimalFormat("0"), new DecimalFormat("0%"));
-            ((PiePlot) chart.getPlot()).setLabelGenerator(labelGenerator);
-            
-            // Create Panel
-            chartPanel = new ChartPanel(chart);
-            chartPanel.setSize(800, 400);
-            chartPanel.setBounds(0,400, 400, 400);
-            chartPanel.setVisible(true);
-            panel_3.add(chartPanel);
-            //this.ButtonOpen.add(this.scrollPane, BorderLayout.CENTER);
-            
-                
+                    "{0} : ({2})", new DecimalFormat("0"), new DecimalFormat("0%"));
+                ((PiePlot) chart.getPlot()).setLabelGenerator(labelGenerator);
+        }
+        else if(innerPanelNo==2){
+        	chart2 = ChartFactory.createPieChart(
+	                filenameCSV+ " Sentiment Analysis",
+	                dataset,
+	                true, 
+	                true,
+	                false);
+        	PieSectionLabelGenerator labelGenerator = new StandardPieSectionLabelGenerator(
+                    "{0} : ({2})", new DecimalFormat("0"), new DecimalFormat("0%"));
+                ((PiePlot) chart2.getPlot()).setLabelGenerator(labelGenerator);
+        }
 
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
+        if (innerPanelNo==1){
+        	chartPanel = new ChartPanel(chart);
+        	chartPanel.setBounds(0,0, 400, 400);
+        	chartPanel.setVisible(true);
+            this.inner_panel_3.add(chartPanel);                
+        }
+        else if(innerPanelNo==2){
+        	chartPanel2 = new ChartPanel(chart2);
+        	chartPanel2.setBounds(0,550, 400, 400);
+        	chartPanel2.setVisible(true);
+            this.inner_panel_3.add(chartPanel2);
+        }
+
+        inner_panel_3.revalidate();
+		inner_panel_3.repaint();
+
 	}
     
     public void createAndUpdateGUI(){
@@ -947,7 +1024,7 @@ public class DisplayGUI{
 	
 		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
 		frame.getContentPane().add("Center", this.tabbedPane);
-		frame.setSize(1920, 900);																													//change the sizing of window here
+		frame.setSize(1920, 2000);																													//change the sizing of window here
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
@@ -957,17 +1034,6 @@ public class DisplayGUI{
 	 * Create a window.  Use JFrame since this window will include 
 	 * lightweight components.
 	 */
-//		JFrame frame = new JFrame("TabbedPaneDemo");
-//	
-//		WindowListener l = new WindowAdapter() {
-//		    public void windowClosing(WindowEvent e) {System.exit(0);}
-//		};
-//		frame.addWindowListener(l);
-//	
-//		frame.getContentPane().add("Center", this.tabbedPane);
-//		frame.setSize(1500, 750);																													//change the sizing of window here
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setVisible(true);
     	DisplayGUI main = new DisplayGUI();
     	main.createAndUpdateGUI();
     }

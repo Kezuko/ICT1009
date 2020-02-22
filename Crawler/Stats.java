@@ -33,6 +33,19 @@ public class Stats {
 			return allData.size();
 	}
 	
+	public List<String[]> getTop10RT(){
+		return Top10RT;
+	}
+	
+	public List<String[]> getTop10Fav(){
+		return Top10Fav;
+	}
+	
+	public void clear(){
+		Top10RT.clear();
+		Top10Fav.clear();
+	}
+	
 	
 	
 	public void openCSV(String file) {
@@ -44,6 +57,7 @@ public class Stats {
 			CSVReader csvReader = new CSVReaderBuilder(filereader).build(); 
 			String[] temp = csvReader.readNext(); // header row. 
 			allData = csvReader.readAll();
+			clear();//clear before next stats
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}	catch (Exception e){

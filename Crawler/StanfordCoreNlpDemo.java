@@ -115,6 +115,7 @@ public class StanfordCoreNlpDemo
         }else{
             System.out.println("The overall tweet is positive");
         }
+        lineArr.clear();
     }
     
 }
