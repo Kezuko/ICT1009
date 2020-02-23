@@ -11,7 +11,7 @@ import java.util.*;
 
 import javax.print.DocFlavor.STRING;
  
-public class StanfordCoreNlpDemo
+public class Sentiment
 {
     private static DecimalFormat df2 = new DecimalFormat("#.##");
  
@@ -19,12 +19,12 @@ public class StanfordCoreNlpDemo
     private static ArrayList<String[]> sentimentTableData = new ArrayList<>();
     private static String sentimentTableHeader;
     
-    public static void setLine(String line){StanfordCoreNlpDemo.lineArr.add(line);}
+    public static void setLine(String line){Sentiment.lineArr.add(line);}
     public static ArrayList<String[]> getSentimentTableData(){
-    	return StanfordCoreNlpDemo.sentimentTableData;}
-    public static void setSentimentTableHeader(String sentimentTableHeader){StanfordCoreNlpDemo.sentimentTableHeader = sentimentTableHeader;}
+    	return Sentiment.sentimentTableData;}
+    public static void setSentimentTableHeader(String sentimentTableHeader){Sentiment.sentimentTableHeader = sentimentTableHeader;}
     
-    public StanfordCoreNlpDemo(){
+    public Sentiment(){
         int negative=0;
         int vNegative=0;
         int positive=0;
@@ -50,10 +50,10 @@ public class StanfordCoreNlpDemo
         StanfordCoreNLP pipeline = new StanfordCoreNLP(pipelineProps);
         // String line = " never regret to love you and the others member really i mean it,thank you for being you,thank you for loving us,Army..thank you for your music and passion..,borahaee";
         //String line = "Cocktail of flu, HIV drugs appears to help fight coronavirus: Thai doctors(Article: BANGKOK: Thai doctors have seen success in treating severe cases of the new coronavirus with combination of medications for flu and HIV, with initial results showing vast improvement 48 hours after applying the treatment, they said on Sunday (Feb 2). The doctors from Rajavithi Hospital in Bangkok said a new approach in coronavirus treatment had improved the condition of several patients under their care, including one 70-year-old Chinese woman from Wuhan who tested positive for the coronavirus for 10 days. The drug treatment includes a mixture of anti-HIV drugs lopinavir and ritonavir, in combination with flu drug oseltamivir in large doses. \"This is not the cure, but the patient's condition has vastly improved. From testing positive for 10 days under our care, after applying this combination of medicine the test result became negative within 48 hours,\" Dr Kriangska Atipornwanich, a lung specialist at Rajavithi, told reporters. \"The outlook is good but we still have to do more study to determine that this can be a standard treatment.\" Chinese health officials have already been administering the HIV and flu drugs to fight the coronavirus. The use of the three together in a cocktail seemed to improve the treatment, the Thai doctors said. Another doctor said that a similar approach in two other patients resulted in one displaying some allergic reaction but the other showed improvement. \"We have been following international practices, but the doctor increased the dosage of one of the drugs,\" said Somsak Akkslim, director-general of the Medical Services Department, referring to the flu medicine Oseltamivir. Thailand has recorded 19 cases of coronavirus. Of the Thai patients, eight have recovered and gone home while 11 are still under treatment in hospitals. Somsak said the health ministry will meet on Monday to discuss the successful treatment in the case of the 70-year-old but said it is still too soon to say that this approach can be applied to all cases.";
-        int tempLength= StanfordCoreNlpDemo.lineArr.size();
-        System.out.println("Array = " + StanfordCoreNlpDemo.lineArr + ",Length = " + tempLength);
+        int tempLength= Sentiment.lineArr.size();
+        System.out.println("Array = " + Sentiment.lineArr + ",Length = " + tempLength);
         String[] ar = new String[100];
-        for(String x:StanfordCoreNlpDemo.lineArr){
+        for(String x:Sentiment.lineArr){
         	ar = x.split("[.!?]");
         	 
         	for (String s : ar){
@@ -97,11 +97,6 @@ public class StanfordCoreNlpDemo
         neutPercentage = 100.00 - negPercentage - posPercentage;
         System.out.println("\nThe tweet is " + df2.format(negPercentage)+ "% negative and " + df2.format(posPercentage) + "% positive");
         System.out.println("\nThe tweet is " + df2.format(vNegPercentage)+ "% v negative and " + df2.format(vPosPercentage) + "% v positive"+ df2.format(neutPercentage) + "% neutral");
-        PieChart.setNeg(negPercentage);																				//negative sentiment
-        PieChart.setPos(posPercentage);
-        PieChart.setNeu(neutPercentage);
-        PieChart.setvNeg(vNegPercentage);
-        PieChart.setvPos(vPosPercentage);
         DisplayGUI.setNeg(negPercentage);																				//negative sentiment
         DisplayGUI.setPos(posPercentage);
         DisplayGUI.setNeu(neutPercentage);

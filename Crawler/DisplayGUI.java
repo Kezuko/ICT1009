@@ -30,6 +30,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,7 +148,8 @@ public class DisplayGUI{
         
         JTextArea log = new JTextArea();
         log.setEditable(false);
-        log.setBounds(10, 245, 450, 226);
+        log.setBounds(10, 245, 450, 350);
+        log.setLineWrap(true);
         panel_1.add(log);
         
         textField = new JTextField();
@@ -169,7 +171,7 @@ public class DisplayGUI{
                     case "Twitter":
                     	Tweet crawlTwitter = new CrawlWithTJ4(textField.getText());
                     	crawlTwitter.searchTweets();
-                    	log.append("There is " + Integer.toString(((CrawlWithTJ4)crawlTwitter).getCounter()) + " Number of Tweets crawled");
+                    	log.append("There are " + Integer.toString(((CrawlWithTJ4)crawlTwitter).getCounter()) + " number of Tweets crawled from keyword " + textField.getText() + newline);
                 		log.setCaretPosition(log.getDocument().getLength());
                     	int returnVal = fc.showSaveDialog(panel1);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -191,7 +193,7 @@ public class DisplayGUI{
                     case "CNA":
                     	WebCrawlerCNA bwc = new WebCrawlerCNA("https://www.channelnewsasia.com/", textField.getText(), textField_3.getText());
                 		bwc.getPageLinks("https://www.channelnewsasia.com/",0);
-                		log.append("There is " + Integer.toString(bwc.getCounter()) + " Number of CNA articles crawled");
+                		log.append("There are " + Integer.toString(bwc.getCounter()) + " number of CNA articles crawled from keywords " + textField.getText() + " " + textField_3.getText() + newline);
                 		log.setCaretPosition(log.getDocument().getLength());
                 		int returnVal2 = fc.showSaveDialog(panel1);
                         if (returnVal2 == JFileChooser.APPROVE_OPTION) {
@@ -213,7 +215,7 @@ public class DisplayGUI{
                     case "Guardian":
                     	WebCrawlGuardian wcg = new WebCrawlGuardian("https://www.theguardian.com/", textField.getText(), textField_3.getText());
                     	wcg.getPageLinks("https://www.theguardian.com/",0);
-                    	log.append("There is " + Integer.toString(wcg.getCounter()) + " Number of The Guardian articles crawled");
+                    	log.append("There are " + Integer.toString(wcg.getCounter()) + " number of The Guardian articles crawled from keywords " + textField.getText() + " " + textField_3.getText() + newline);
                 		log.setCaretPosition(log.getDocument().getLength());
                 		int returnVal3 = fc.showSaveDialog(panel1);
                         if (returnVal3 == JFileChooser.APPROVE_OPTION) {
@@ -299,10 +301,20 @@ public class DisplayGUI{
 	        			WebCrawlGuardian.setMaxPage(1000);
 	        			System.out.println("1000");
 	        			break;
+	        		case 10:
+	        			WebCrawlerCNA.setMaxPage(2000);
+	        			WebCrawlGuardian.setMaxPage(2000);
+	        			System.out.println("2000");
+	        			break;
+	        		case 11:
+	        			WebCrawlerCNA.setMaxPage(3000);
+	        			WebCrawlGuardian.setMaxPage(3000);
+	        			System.out.println("3000");
+	        			break;		
         		}
         	}
         });
-        comboBox_3.setModel(new DefaultComboBoxModel(new String[] {"100", "200", "300", "400", "500", "600", "700", "800", "900", "1000"}));
+        comboBox_3.setModel(new DefaultComboBoxModel(new String[] {"100", "200", "300", "400", "500", "600", "700", "800", "900", "1000", "2000", "3000"}));
         comboBox_3.setBounds(10, 163, 89, 20);
         panel_1.add(comboBox_3);
         
@@ -776,10 +788,8 @@ public class DisplayGUI{
 	            int columnIndexToSort = 1;
 
 	            while (columnIndexToSort < NewModel.getColumnCount()){
-	            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));
+	            	sortKeys.add(new RowSorter.SortKey(columnIndexToSort++, SortOrder.ASCENDING));	            	
 	            }
-
-	             
 	            sorter.setSortKeys(sortKeys);
 	            sorter.sort();
 	            
@@ -914,6 +924,23 @@ public class DisplayGUI{
 		            }
 	
 		            sorter.setSortKeys(sortKeys);
+		            sorter.setComparator(1, new Comparator<String>() {
+		            	@Override
+		            	public int compare(String name1, String name2) {
+		            		Integer temp1 = Integer.parseInt(name1);
+		            		Integer temp2 = Integer.parseInt(name2);
+		            		return temp1.compareTo(temp2);
+		            	}
+	            	});
+		            sorter.setComparator(3, new Comparator<String>() {
+		            	@Override
+		            	public int compare(String name1, String name2) {
+		            		Integer temp1 = Integer.parseInt(name1);
+		            		Integer temp2 = Integer.parseInt(name2);
+		            		return temp1.compareTo(temp2);
+		            	}
+	            	});
+
 		            sorter.sort();
 		            
 	
@@ -951,6 +978,22 @@ public class DisplayGUI{
     	            }
 
     	            sorter.setSortKeys(sortKeys);
+    	            sorter.setComparator(1, new Comparator<String>() {
+		            	@Override
+		            	public int compare(String name1, String name2) {
+		            		Integer temp1 = Integer.parseInt(name1);
+		            		Integer temp2 = Integer.parseInt(name2);
+		            		return temp1.compareTo(temp2);
+		            	}
+	            	});
+		            sorter.setComparator(3, new Comparator<String>() {
+		            	@Override
+		            	public int compare(String name1, String name2) {
+		            		Integer temp1 = Integer.parseInt(name1);
+		            		Integer temp2 = Integer.parseInt(name2);
+		            		return temp1.compareTo(temp2);
+		            	}
+	            	});
     	            sorter.sort();
     	            
 
