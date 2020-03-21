@@ -1,12 +1,9 @@
 # ICT1009
-########################################
-1. Installation steps
-2. OOP principles used
-########################################
-1. Installation steps
+1. Installation steps:
+
+
 Pre-requisites:
-1. Mingw
-2. Qt creator
+Mingw, Qt creator
 
 
 Run executable (at location below) to display the gui:
@@ -18,7 +15,9 @@ ICT1009\C++\qtgui
 
 
 
-2. OOP principles used
+2. OOP principles used:
+
+
 Inheritance: SharedResource.h (Parent class), Search.h (Child class) 
 Explaination: Usage of super-sub class, and what files to #include
 
