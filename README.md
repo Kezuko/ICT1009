@@ -6,8 +6,8 @@ Pre-requisites:
 Mingw, Qt creator
 
 
-Run executable (at location below) to display the gui:
-ICT1009\C++\build-qtgui-Desktop_Qt_5_14_1_MinGW_64_bit-Debug\qtgui.exe
+Delete folder (stated below) to solve executable crash bug (delete folder, then build project, then run the project in QT Creator):
+ICT1009\C++\build-qtgui-Desktop_Qt_5_14_1_MinGW_64_bit-Debug
 
 Open qt creator (at directory below) to modify the gui:
 ICT1009\C++\qtgui
