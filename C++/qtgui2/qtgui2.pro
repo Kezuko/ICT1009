@@ -18,14 +18,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    CNAModel.cpp \
     MyModel.cpp \
     main.cpp \
     mainwindow.cpp \
+    sentimentone.cpp \
     test.cpp \
     drilldownchart.cpp \
     drilldownslice.cpp
 
 HEADERS += \
+    CNAModel.h \
     MyModel.h \
     crawl.h \
     csv.h \
@@ -33,13 +36,15 @@ HEADERS += \
     mainwindow.h \
     parser.h \
     search.h \
+    sentimentone.h \
     sharedresource.h \
     statistics.h \
     drilldownchart.h \
     drilldownslice.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    sentimentone.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

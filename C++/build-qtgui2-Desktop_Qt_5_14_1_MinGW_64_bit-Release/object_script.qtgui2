@@ -1,10 +1,12 @@
+CNAModel.o
 MyModel.o
-drilldownchart.o
-drilldownslice.o
 main.o
 mainwindow.o
+sentimentone.o
 test.o
+drilldownchart.o
+drilldownslice.o
+moc_CNAModel.o
 moc_MyModel.o
-moc_drilldownchart.o
-moc_drilldownslice.o
 moc_mainwindow.o
+moc_sentimentone.o

@@ -468,9 +468,9 @@
      <widget class="QTableView" name="tableView_2">
       <property name="geometry">
        <rect>
-        <x>540</x>
+        <x>0</x>
         <y>200</y>
-        <width>1121</width>
+        <width>1661</width>
         <height>341</height>
        </rect>
       </property>
@@ -478,29 +478,9 @@
      <widget class="QTableView" name="tableView_4">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>540</y>
-        <width>1121</width>
-        <height>341</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QWidget" name="widget" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>200</y>
-        <width>541</width>
-        <height>341</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QWidget" name="widget_2" native="true">
-      <property name="geometry">
-       <rect>
         <x>0</x>
         <y>540</y>
-        <width>541</width>
+        <width>1661</width>
         <height>341</height>
        </rect>
       </property>
