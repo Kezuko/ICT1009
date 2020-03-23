@@ -32,6 +32,7 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
+    QVBoxLayout *verticalLayout_5;
     QTabWidget *Tab;
     QWidget *tab;
     QWidget *verticalLayoutWidget;
@@ -129,9 +130,16 @@ public:
         MainWindow->resize(1667, 910);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
+        centralwidget->setSizePolicy(sizePolicy);
+        centralwidget->setLayoutDirection(Qt::LeftToRight);
+        verticalLayout_5 = new QVBoxLayout(centralwidget);
+        verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
         Tab = new QTabWidget(centralwidget);
         Tab->setObjectName(QString::fromUtf8("Tab"));
-        Tab->setGeometry(QRect(0, 10, 1661, 851));
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
         verticalLayoutWidget = new QWidget(tab);
@@ -467,6 +475,9 @@ public:
         tab_5 = new QWidget();
         tab_5->setObjectName(QString::fromUtf8("tab_5"));
         Tab->addTab(tab_5, QString());
+
+        verticalLayout_5->addWidget(Tab);
+
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -478,7 +489,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        Tab->setCurrentIndex(2);
+        Tab->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

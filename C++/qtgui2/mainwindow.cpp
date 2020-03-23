@@ -19,6 +19,11 @@
 #include <QtCore/QDebug>
 #include "sentimentone.h"
 #include "CNAModel.h"
+#include <QtCore/QSortFilterProxyModel>
+#include <cctype>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -109,11 +114,11 @@ void MainWindow::displayTable(QTableView* tv){
      * Open a file dialog
      */
     QFileDialog dialog(this);
-    QString currDir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                    "/home",
-                                                    QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks);
-    QString fileName = QFileDialog::getOpenFileName(this, "Open a file", currDir, tr("CSV files (*.csv)"));
+//    QString currDir = QFileDialog::getExistingDirectory(this, tr("Open a directory"),
+//                                                    "/home",
+//                                                    QFileDialog::ShowDirsOnly
+//                                                    | QFileDialog::DontResolveSymlinks);
+    QString fileName = QFileDialog::getOpenFileName(this, "Open a file", QDir::currentPath(), tr("CSV files (*.csv)"));
     dialog.setViewMode(QFileDialog::Detail);
     QMessageBox::information(this,"...",fileName);
 
@@ -222,19 +227,109 @@ void MainWindow::displayTable(QTableView* tv){
      */
     if (header.size()==3){
         CNAModel *cnaModel = new CNAModel(this);//replicate this for search and statistics tab
+        QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+
+        proxyModel->setSourceModel(cnaModel);
+        tv->setModel(proxyModel);
+        proxyModel->setFilterRegExp(QRegExp("coronavirus", Qt::CaseInsensitive,
+                                            QRegExp::FixedString));
+        proxyModel->setFilterKeyColumn(1);
+        proxyModel->setDynamicSortFilter(true);
         cnaModel->populateData(categoryCol, titleCol, dateCol, header);
+
         tv->setModel(cnaModel);//replicate this for tableView_2,_3,_4,_5...
         tv->horizontalHeader()->setVisible(true);
     //    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         tv->verticalHeader()->setMinimumWidth(25);
         tv->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
         tv->setSortingEnabled(true);//improve this code, sorting doesn't work
+
         tv->resizeColumnsToContents();
         tv->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        int numRows = cnaModel->rowCount();
+        for(QVector<string>::iterator i=titleCol.begin(); i != titleCol.end(); i++){
+            bool match = false;
+            string keyword1 = ui->lineEdit_3->text().toUtf8().constData();
+            string keyword2 = ui->lineEdit_4->text().toUtf8().constData();
+
+            if(!keyword1.empty()){
+                if(!keyword2.empty()){
+                    //do nothing
+                }
+                else if(keyword2.empty()){
+                    keyword2 = keyword1;
+                }
+            }
+            else if(keyword1.empty()){
+                if(!keyword2.empty()){
+                    keyword1 = keyword2;
+                }
+                else if(keyword2.empty()){
+                    break;
+                }
+            }
+
+            std::size_t keyword1found = i->find(keyword1);
+            for (char &c : keyword1){
+                putchar(toupper(c));
+            }
+            std::size_t keyword1foundupper = i->find(keyword1);
+            for (char &c : keyword1){
+                putchar(tolower(c));
+            }
+            std::size_t keyword1foundlower = i->find(keyword1);
+
+
+
+            std::size_t keyword2found = i->find(keyword2);
+            for (char &c : keyword1){
+                putchar(toupper(c));
+            }
+            std::size_t keyword2foundupper = i->find(keyword2);
+            for (char &c : keyword1){
+                putchar(tolower(c));
+            }
+            std::size_t keyword2foundlower = i->find(keyword2);
+            if (keyword1found!=std::string::npos && keyword2found!=std::string::npos){
+                match = true;
+            }
+            if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                match = true;
+            }
+            if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                match = true;
+            }
+            if (keyword1foundlower!=std::string::npos && keyword2foundlower!=std::string::npos){
+                match = true;
+            }
+            int index = std::distance( titleCol.begin(), i );
+            if (!match){
+                tv->hideRow(index);
+                numRows--;
+            }
+
+        }
+
         tv->show();
+        QObject* button = QObject::sender();
+        if(button == ui->searchTab_firstCsvBrowseClick){
+            ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+        }
+        else if(button == ui->searchTab_secondCsvBrowseClick){
+            ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+        }
+        else if(button == ui->displayTab_browseClick){
+            ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+        }
+        cout << "CNA/TheGuardian row count = " << numRows << "x" << cnaModel->columnCount() << endl;
     }
     else if (header.size()==5){
         MyModel *myModel = new MyModel(this);//replicate this for search and statistics tab
+        QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+
+        proxyModel->setSourceModel(myModel);
+        tv->setModel(proxyModel);
+        proxyModel->setDynamicSortFilter(true);
         myModel->populateData(usernameCol, tweetCol, retweetCol, favouriteCol, dateCol, header);
         tv->setModel(myModel);//replicate this for tableView_2,_3,_4,_5...
         tv->horizontalHeader()->setVisible(true);
@@ -242,9 +337,84 @@ void MainWindow::displayTable(QTableView* tv){
         tv->verticalHeader()->setMinimumWidth(25);
         tv->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
         tv->setSortingEnabled(true);//improve this code, sorting doesn't work
+
         tv->resizeColumnsToContents();
         tv->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        int numRows = myModel->rowCount();
+        for(QVector<string>::iterator i=tweetCol.begin(); i != tweetCol.end(); i++){
+            bool match = false;
+
+            string keyword1 = ui->lineEdit_3->text().toUtf8().constData();
+            string keyword2 = ui->lineEdit_4->text().toUtf8().constData();
+
+            if(!keyword1.empty()){
+                if(!keyword2.empty()){
+                    //do nothing
+                }
+                else if(keyword2.empty()){
+                    keyword2 = keyword1;
+                }
+            }
+            else if(keyword1.empty()){
+                if(!keyword2.empty()){
+                    keyword1 = keyword2;
+                }
+                else if(keyword2.empty()){
+                    break;
+                }
+            }
+            std::size_t keyword1found = i->find(keyword1);
+            for (char &c : keyword1){
+                putchar(toupper(c));
+            }
+            std::size_t keyword1foundupper = i->find(keyword1);
+            for (char &c : keyword1){
+                putchar(tolower(c));
+            }
+            std::size_t keyword1foundlower = i->find(keyword1);
+
+
+
+            std::size_t keyword2found = i->find(keyword2);
+            for (char &c : keyword1){
+                putchar(toupper(c));
+            }
+            std::size_t keyword2foundupper = i->find(keyword2);
+            for (char &c : keyword1){
+                putchar(tolower(c));
+            }
+            std::size_t keyword2foundlower = i->find(keyword2);
+            if (keyword1found!=std::string::npos && keyword2found!=std::string::npos){
+                match = true;
+            }
+            if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                match = true;
+            }
+            if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                match = true;
+            }
+            if (keyword1foundlower!=std::string::npos && keyword2foundlower!=std::string::npos){
+                match = true;
+            }
+            int index = std::distance( tweetCol.begin(), i );
+            if (!match){
+                tv->hideRow(index);
+                numRows--;
+            }
+
+        }
         tv->show();
+        QObject* button = QObject::sender();
+        if(button == ui->searchTab_firstCsvBrowseClick){
+            ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+        }
+        else if(button == ui->searchTab_secondCsvBrowseClick){
+            ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+        }
+        else if(button == ui->displayTab_browseClick){
+            ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+        }
+        cout << "Twitter row count = " << numRows << "x" << myModel->columnCount() << endl;
     }
 
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1667</width>
-    <height>910</height>
+    <height>1001</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,11 +20,11 @@
       <x>0</x>
       <y>10</y>
       <width>1661</width>
-      <height>851</height>
+      <height>941</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -287,13 +287,6 @@
          </property>
         </spacer>
        </item>
-       <item>
-        <widget class="QPushButton" name="displayTab_clearClick">
-         <property name="text">
-          <string>Clear All</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
      <widget class="QTableView" name="tableView">
@@ -302,8 +295,21 @@
         <x>0</x>
         <y>30</y>
         <width>1651</width>
-        <height>791</height>
+        <height>841</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>1480</x>
+        <y>880</y>
+        <width>171</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
@@ -401,38 +407,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="horizontalLayoutWidget_10">
-      <property name="geometry">
-       <rect>
-        <x>210</x>
-        <y>160</y>
-        <width>571</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
-       <item>
-        <widget class="QPushButton" name="searchTab_clearClick">
-         <property name="text">
-          <string>Clear All</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_7">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="horizontalLayoutWidget_8">
       <property name="geometry">
        <rect>
@@ -469,8 +443,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>200</y>
-        <width>1661</width>
+        <y>160</y>
+        <width>1651</width>
         <height>341</height>
        </rect>
       </property>
@@ -480,9 +454,35 @@
        <rect>
         <x>0</x>
         <y>540</y>
-        <width>1661</width>
+        <width>1651</width>
         <height>341</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>1541</x>
+        <y>500</y>
+        <width>111</width>
+        <height>39</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>1531</x>
+        <y>880</y>
+        <width>121</width>
+        <height>39</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
@@ -553,8 +553,8 @@
        <rect>
         <x>0</x>
         <y>110</y>
-        <width>781</width>
-        <height>401</height>
+        <width>1651</width>
+        <height>761</height>
        </rect>
       </property>
      </widget>
@@ -622,11 +622,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Page</string>
-     </attribute>
     </widget>
    </widget>
   </widget>
