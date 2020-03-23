@@ -9,12 +9,62 @@
 #include <sstream>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "drilldownchart.h"
+#include "drilldownslice.h"
+#include <QtWidgets/QApplication>
+#include <QtCore/QRandomGenerator>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include <QtCore/QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QT_CHARTS_USE_NAMESPACE
+    QMainWindow window;
+
+    DrilldownChart *chart = new DrilldownChart();
+    chart->setTheme(QChart::ChartThemeLight);
+    chart->setAnimationOptions(QChart::AllAnimations);
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignRight);
+
+    QPieSeries *yearSeries = new QPieSeries(&window);
+    yearSeries->setName("Sales by year - All");
+
+    const QStringList months = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+    const QStringList names = {
+        "Jane", "John", "Axel", "Mary", "Susan", "Bob"
+    };
+
+    for (const QString &name : names) {
+        QPieSeries *series = new QPieSeries(&window);
+        series->setName("Sales by month - " + name);
+
+        for (const QString &month : months)
+            *series << new DrilldownSlice(QRandomGenerator::global()->bounded(1000), month, yearSeries);
+
+        QObject::connect(series, &QPieSeries::clicked, chart, &DrilldownChart::handleSliceClicked);
+
+        *yearSeries << new DrilldownSlice(series->sum(), name, series);
+    }
+
+    QObject::connect(yearSeries, &QPieSeries::clicked, chart, &DrilldownChart::handleSliceClicked);
+
+    chart->changeSeries(yearSeries);
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    window.setCentralWidget(chartView);
+    window.resize(800, 500);
+    window.show();
+
 /*
     Declaring 5 hardcoded columns for Twitter - Copy 5.csv
     Note: passing column size called variable "size" to table
@@ -242,4 +292,9 @@ void MainWindow::on_displayTab_browseClick_clicked()
 
 void MainWindow::on_displayTab_clearClick_clicked()
 {
+}
+
+void MainWindow::on_searchTab_firstCsvBrowseClick_clicked()
+{
+
 }

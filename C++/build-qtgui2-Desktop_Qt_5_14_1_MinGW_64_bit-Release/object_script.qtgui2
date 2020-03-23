@@ -1,0 +1,10 @@
+MyModel.o
+drilldownchart.o
+drilldownslice.o
+main.o
+mainwindow.o
+test.o
+moc_MyModel.o
+moc_drilldownchart.o
+moc_drilldownslice.o
+moc_mainwindow.o

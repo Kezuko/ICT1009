@@ -18,6 +18,8 @@ private slots:
 
     void on_displayTab_clearClick_clicked();
 
+    void on_searchTab_firstCsvBrowseClick_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

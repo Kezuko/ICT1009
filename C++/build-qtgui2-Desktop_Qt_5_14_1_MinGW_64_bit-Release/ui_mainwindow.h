@@ -99,6 +99,9 @@ public:
     QPushButton *searchTab_firstCsvBrowseClick;
     QSpacerItem *horizontalSpacer_5;
     QTableView *tableView_2;
+    QTableView *tableView_4;
+    QWidget *widget;
+    QWidget *widget_2;
     QWidget *tab_4;
     QWidget *verticalLayoutWidget_4;
     QVBoxLayout *verticalLayout_4;
@@ -117,6 +120,7 @@ public:
     QHBoxLayout *horizontalLayout_6;
     QPushButton *statisticsTab_secondCsvBrowseClick;
     QSpacerItem *horizontalSpacer_3;
+    QWidget *tab_5;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -390,7 +394,16 @@ public:
 
         tableView_2 = new QTableView(tab_3);
         tableView_2->setObjectName(QString::fromUtf8("tableView_2"));
-        tableView_2->setGeometry(QRect(0, 200, 781, 311));
+        tableView_2->setGeometry(QRect(540, 200, 1121, 341));
+        tableView_4 = new QTableView(tab_3);
+        tableView_4->setObjectName(QString::fromUtf8("tableView_4"));
+        tableView_4->setGeometry(QRect(540, 540, 1121, 341));
+        widget = new QWidget(tab_3);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        widget->setGeometry(QRect(0, 200, 541, 341));
+        widget_2 = new QWidget(tab_3);
+        widget_2->setObjectName(QString::fromUtf8("widget_2"));
+        widget_2->setGeometry(QRect(0, 540, 541, 341));
         Tab->addTab(tab_3, QString());
         tab_4 = new QWidget();
         tab_4->setObjectName(QString::fromUtf8("tab_4"));
@@ -459,6 +472,9 @@ public:
         horizontalLayout_6->addItem(horizontalSpacer_3);
 
         Tab->addTab(tab_4, QString());
+        tab_5 = new QWidget();
+        tab_5->setObjectName(QString::fromUtf8("tab_5"));
+        Tab->addTab(tab_5, QString());
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -470,7 +486,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        Tab->setCurrentIndex(1);
+        Tab->setCurrentIndex(2);
 
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -514,7 +530,8 @@ public:
         statisticsTab_clearClick->setText(QCoreApplication::translate("MainWindow", "Clear All", nullptr));
         statisticsTab_firstCsvBrowseClick->setText(QCoreApplication::translate("MainWindow", "Browse", nullptr));
         statisticsTab_secondCsvBrowseClick->setText(QCoreApplication::translate("MainWindow", "Browse", nullptr));
-        Tab->setTabText(Tab->indexOf(tab_4), QCoreApplication::translate("MainWindow", "Sentiment", nullptr));
+        Tab->setTabText(Tab->indexOf(tab_4), QCoreApplication::translate("MainWindow", "Statistics", nullptr));
+        Tab->setTabText(Tab->indexOf(tab_5), QCoreApplication::translate("MainWindow", "Page", nullptr));
     } // retranslateUi
 
 };

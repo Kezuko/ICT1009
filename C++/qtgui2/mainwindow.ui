@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -468,17 +468,47 @@
      <widget class="QTableView" name="tableView_2">
       <property name="geometry">
        <rect>
+        <x>540</x>
+        <y>200</y>
+        <width>1121</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView_4">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>540</y>
+        <width>1121</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="geometry">
+       <rect>
         <x>0</x>
         <y>200</y>
-        <width>781</width>
-        <height>311</height>
+        <width>541</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widget_2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>540</y>
+        <width>541</width>
+        <height>341</height>
        </rect>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_4">
      <attribute name="title">
-      <string>Sentiment</string>
+      <string>Statistics</string>
      </attribute>
      <widget class="QWidget" name="verticalLayoutWidget_4">
       <property name="geometry">
@@ -612,6 +642,11 @@
        </item>
       </layout>
      </widget>
+    </widget>
+    <widget class="QWidget" name="tab_5">
+     <attribute name="title">
+      <string>Page</string>
+     </attribute>
     </widget>
    </widget>
   </widget>

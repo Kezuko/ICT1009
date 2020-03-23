@@ -1,4 +1,6 @@
 QT       += core gui
+QT       += charts
+QT       += widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,7 +21,9 @@ SOURCES += \
     MyModel.cpp \
     main.cpp \
     mainwindow.cpp \
-    test.cpp
+    test.cpp \
+    drilldownchart.cpp \
+    drilldownslice.cpp
 
 HEADERS += \
     MyModel.h \
@@ -30,7 +34,9 @@ HEADERS += \
     parser.h \
     search.h \
     sharedresource.h \
-    statistics.h
+    statistics.h \
+    drilldownchart.h \
+    drilldownslice.h
 
 FORMS += \
     mainwindow.ui
