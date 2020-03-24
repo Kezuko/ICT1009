@@ -1,16 +1,16 @@
-#include "MyModel.h"
+#include "TwitterModel.h"
 #include <vector>
 #include <string>
 #include <iostream>
 using namespace std;
 
-MyModel::MyModel(QObject *parent)
+TwitterModel::TwitterModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
 }
 
 // Create a method to populate the model with data:
-void MyModel::populateData(QVector<string> username, QVector<string> tweet, QVector<string> retweet, QVector<string> favourite, QVector<string> date, QVector<string> header )
+void TwitterModel::populateData(QVector<string> username, QVector<string> tweet, QVector<string> retweet, QVector<string> favourite, QVector<string> date, QVector<string> header )
 {
     usernameCol = username;
     tweetCol = tweet;
@@ -21,17 +21,17 @@ void MyModel::populateData(QVector<string> username, QVector<string> tweet, QVec
     return;
 }
 
-int MyModel::rowCount(const QModelIndex & /*parent*/) const
+int TwitterModel::rowCount(const QModelIndex & /*parent*/) const
 {
    return usernameCol.size();
 }
 
-int MyModel::columnCount(const QModelIndex & /*parent*/) const
+int TwitterModel::columnCount(const QModelIndex & /*parent*/) const
 {
     return headerCol.size();
 }
 
-QVariant MyModel::data(const QModelIndex &index, int role) const
+QVariant TwitterModel::data(const QModelIndex &index, int role) const
 {
     cout << index.row() << endl;
     if (role == Qt::DisplayRole)
@@ -59,7 +59,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant TwitterModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section) {

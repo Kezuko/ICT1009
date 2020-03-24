@@ -20,32 +20,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     CNAModel.cpp \
-    MyModel.cpp \
+    SentimentMainWindow.cpp \
+    TwitterModel.cpp \
     main.cpp \
     mainwindow.cpp \
-    sentimentone.cpp \
-    test.cpp \
     drilldownchart.cpp \
     drilldownslice.cpp
 
 HEADERS += \
     CNAModel.h \
-    MyModel.h \
-    crawl.h \
-    csv.h \
-    display.h \
+    SentimentMainWindow.h \
+    TwitterModel.h \
     mainwindow.h \
     parser.h \
-    search.h \
-    sentimentone.h \
-    sharedresource.h \
-    statistics.h \
     drilldownchart.h \
     drilldownslice.h
 
 FORMS += \
-    mainwindow.ui \
-    sentimentone.ui
+    SentimentMainWindow.ui \
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -15,12 +15,9 @@ public:
     ~MainWindow();
     void displaySentimentPieChartOne();
     void displayTable(QTableView* tv);
-    void setFileName(QString fileName);
 
 private slots:
     void on_displayTab_browseClick_clicked();
-
-    void on_displayTab_clearClick_clicked();
 
     void on_searchTab_firstCsvBrowseClick_clicked();
 
@@ -28,6 +25,5 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QString fileNaming;
 };
 #endif // MAINWINDOW_H
