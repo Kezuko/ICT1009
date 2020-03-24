@@ -15,6 +15,7 @@ public:
     ~MainWindow();
     void displaySentimentPieChartOne();
     void displayTable(QTableView* tv);
+    bool comparator(std::string& a,std::string& b);
 
 private slots:
     void on_displayTab_browseClick_clicked();
@@ -22,6 +23,8 @@ private slots:
     void on_searchTab_firstCsvBrowseClick_clicked();
 
     void on_searchTab_secondCsvBrowseClick_clicked();
+
+    void on_filterTab_browseClick_clicked();
 
 private:
     Ui::MainWindow *ui;

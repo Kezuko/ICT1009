@@ -22,6 +22,7 @@ SOURCES += \
     CNAModel.cpp \
     SentimentMainWindow.cpp \
     TwitterModel.cpp \
+    covid19model.cpp \
     main.cpp \
     mainwindow.cpp \
     drilldownchart.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     CNAModel.h \
     SentimentMainWindow.h \
     TwitterModel.h \
+    covid19model.h \
     mainwindow.h \
     parser.h \
     drilldownchart.h \

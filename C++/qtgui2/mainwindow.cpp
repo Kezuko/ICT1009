@@ -24,6 +24,8 @@
 #include <iostream>
 #include <cstring>
 #include <cstdio>
+#include "covid19model.h"
+#include<bits/stdc++.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -134,6 +136,9 @@ void MainWindow::displayTable(QTableView* tv){
     QVector<string> tweetCol;
     QVector<string> retweetCol;
     QVector<string> favouriteCol;
+
+    QVector<string> confirmedCasesCol;
+    QVector<string> countryCol;
     int size = 0;
 
     if(!fileName.isEmpty()&& !fileName.isNull()){
@@ -188,38 +193,70 @@ void MainWindow::displayTable(QTableView* tv){
                 favouriteCol.push_back(row[3]);
                 dateCol.push_back(row[4]);
             }
+            else if(header.size()==66){
+                countryCol.push_back(row[1]);
+                confirmedCasesCol.push_back(row[65]);
+            }//Covid19 has 66 columns
 
         }
-
+        struct covid {
+            string country;
+            string number;
+        };
+        QVector<covid> pp;
+        for(int i=0; i < countryCol.size(); i++){
+            covid test;
+            test.country = countryCol[i];
+            test.number = confirmedCasesCol[i];
+            pp.push_back(test);
+        }
         /*
             Troubleshooting
         */
 
         using namespace std;
-        for(std::string u : categoryCol){
-            cout << "C=" << u << endl;
+//        for(std::string u : categoryCol){
+//            cout << "C=" << u << endl;
+//        }
+//        for(std::string t : titleCol){
+//            cout << "T=" << t << endl;
+//        }
+//        for(std::string r : dateCol){
+//            cout << "D=" << r << endl;
+//        }
+//        for(std::string h : header){
+//            cout << "H=" << h << endl;
+//        }
+//        for(std::string u : usernameCol){
+//            cout << "U=" << u << endl;
+//        }
+//        for(std::string t : tweetCol){
+//            cout << "T=" << t << endl;
+//        }
+//        for(std::string r : retweetCol){
+//            cout << "R=" << r << endl;
+//        }
+//        for(std::string f : favouriteCol){
+//            cout << "F=" << f << endl;
+//        }
+//        for(string cc : top10country){
+//            cout << "CC=" << cc << endl;
+//        }
+//        for(string ccc : top10Count){
+//            cout << "CCC=" << ccc << endl;
+//        }
+
+        std::sort(pp.begin(), pp.end(), [](const covid& lhs, const covid& rhs) -> bool
+        {
+             return stoi(rhs.number) > stoi(lhs.number);
+        });
+        QVector<string> newCountry;
+        QVector<string> newCount;
+        for(int i = 227; i < pp.size(); i++){
+            newCountry.push_back(pp[i].country);
+            newCount.push_back(pp[i].number);
         }
-        for(std::string t : titleCol){
-            cout << "T=" << t << endl;
-        }
-        for(std::string r : dateCol){
-            cout << "D=" << r << endl;
-        }
-        for(std::string h : header){
-            cout << "H=" << h << endl;
-        }
-        for(std::string u : usernameCol){
-            cout << "U=" << u << endl;
-        }
-        for(std::string t : tweetCol){
-            cout << "T=" << t << endl;
-        }
-        for(std::string r : retweetCol){
-            cout << "R=" << r << endl;
-        }
-        for(std::string f : favouriteCol){
-            cout << "F=" << f << endl;
-        }
+
 
         /*
          * Depending on whether (1) Twitter CSV, (2) TheGuardian/CNA CSV is displaying, (1) TwitterModel = Twitter CSV Table Model, (2) CNAModel = TheGuardian/CNA CSV Table Model
@@ -255,84 +292,127 @@ void MainWindow::displayTable(QTableView* tv){
             tv->resizeColumnsToContents();
             tv->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             int numRows = cnaModel->rowCount();
-            string keyword1 = "";
-            string keyword2 = "";
-            for(QVector<string>::iterator i=titleCol.begin(); i != titleCol.end(); i++){
-                bool match = false;
-                if(tv!=ui->tableView){
-                    keyword1 = ui->lineEdit_3->text().toUtf8().constData();
-                    keyword2 = ui->lineEdit_4->text().toUtf8().constData();
-                }
-
-
-                if(!keyword1.empty()){
-                    if(!keyword2.empty()){
-                        //do nothing
-                    }
-                    else if(keyword2.empty()){
-                        keyword2 = keyword1;
-                    }
-                }
-                else if(keyword1.empty()){
-                    if(!keyword2.empty()){
-                        keyword1 = keyword2;
-                    }
-                    else if(keyword2.empty()){
-                        break;
-                    }
-                }
-
-                std::size_t keyword1found = i->find(keyword1);
-                for (char &c : keyword1){
-                    putchar(toupper(c));
-                }
-                std::size_t keyword1foundupper = i->find(keyword1);
-                for (char &c : keyword1){
-                    putchar(tolower(c));
-                }
-                std::size_t keyword1foundlower = i->find(keyword1);
-
-
-
-                std::size_t keyword2found = i->find(keyword2);
-                for (char &c : keyword1){
-                    putchar(toupper(c));
-                }
-                std::size_t keyword2foundupper = i->find(keyword2);
-                for (char &c : keyword1){
-                    putchar(tolower(c));
-                }
-                std::size_t keyword2foundlower = i->find(keyword2);
-                if (keyword1found!=std::string::npos && keyword2found!=std::string::npos){
-                    match = true;
-                }
-                if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
-                    match = true;
-                }
-                if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
-                    match = true;
-                }
-                if (keyword1foundlower!=std::string::npos && keyword2foundlower!=std::string::npos){
-                    match = true;
-                }
-                int index = std::distance( titleCol.begin(), i );
-                if (!match){
-                    tv->hideRow(index);
-                    numRows--;
-                }
-
-            }
-
-            tv->show();
             QObject* button = QObject::sender();
-            if(button == ui->searchTab_firstCsvBrowseClick){
-                ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+            if(button == ui->searchTab_firstCsvBrowseClick||button == ui->searchTab_secondCsvBrowseClick||button == ui->displayTab_browseClick){
+                string keyword1 = "";
+                string keyword2 = "";
+                for(QVector<string>::iterator i=titleCol.begin(); i != titleCol.end(); i++){
+                    bool match = false;
+                    if(tv!=ui->tableView){
+                        keyword1 = ui->lineEdit_3->text().toUtf8().constData();
+                        keyword2 = ui->lineEdit_4->text().toUtf8().constData();
+                    }
+
+
+                    if(!keyword1.empty()){
+                        if(!keyword2.empty()){
+                            //do nothing
+                        }
+                        else if(keyword2.empty()){
+                            keyword2 = keyword1;
+                        }
+                    }
+                    else if(keyword1.empty()){
+                        if(!keyword2.empty()){
+                            keyword1 = keyword2;
+                        }
+                        else if(keyword2.empty()){
+                            break;
+                        }
+                    }
+
+                    std::size_t keyword1found = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(toupper(c));
+                    }
+                    std::size_t keyword1foundupper = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(tolower(c));
+                    }
+                    std::size_t keyword1foundlower = i->find(keyword1);
+
+
+
+                    std::size_t keyword2found = i->find(keyword2);
+                    for (char &c : keyword1){
+                        putchar(toupper(c));
+                    }
+                    std::size_t keyword2foundupper = i->find(keyword2);
+                    for (char &c : keyword1){
+                        putchar(tolower(c));
+                    }
+                    std::size_t keyword2foundlower = i->find(keyword2);
+                    if (keyword1found!=std::string::npos && keyword2found!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundlower!=std::string::npos && keyword2foundlower!=std::string::npos){
+                        match = true;
+                    }
+                    int index = std::distance( titleCol.begin(), i );
+                    if (!match){
+                        tv->hideRow(index);
+                        numRows--;
+                    }
+
+                }
+
+                tv->show();
+                QObject* button = QObject::sender();
+                if(button == ui->searchTab_firstCsvBrowseClick){
+                    ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+                }
+                else if(button == ui->searchTab_secondCsvBrowseClick){
+                    ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+                }
+                else if(button == ui->displayTab_browseClick){
+                    ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+                }
             }
-            else if(button == ui->searchTab_secondCsvBrowseClick){
-                ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
-            }
-            else if(button == ui->displayTab_browseClick){
-                ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded"));
+            else if(button == ui->filterTab_browseClick){
+                string keyword1;
+                for(QVector<string>::iterator i=titleCol.begin(); i != titleCol.end(); i++){
+                    bool match = false;
+
+                    keyword1 = ui->comboBox->currentText().toStdString();
+
+                    std::size_t keyword1found = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(toupper(c));
+                    }
+                    std::size_t keyword1foundupper = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(tolower(c));
+                    }
+                    std::size_t keyword1foundlower = i->find(keyword1);
+
+
+                    if (keyword1found!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundupper!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundlower!=std::string::npos){
+                        match = true;
+                    }
+                    int index = std::distance( titleCol.begin(), i );
+                    if (!match){
+                        tv->hideRow(index);
+                        numRows--;
+                    }
+
+                }
+
+                tv->show();
+                QString tempStr = QString::fromStdString(to_string(numRows) + " rows x " + to_string(cnaModel->columnCount()) + " columns loaded");
+                ui->label_14->clear();
+                ui->label_14->setText(tempStr);
             }
         }
         else if (header.size()==5){
@@ -353,90 +433,163 @@ void MainWindow::displayTable(QTableView* tv){
             tv->resizeColumnsToContents();
             tv->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             int numRows = myModel->rowCount();
-            for(QVector<string>::iterator i=tweetCol.begin(); i != tweetCol.end(); i++){
-                bool match = false;
-
-                string keyword1 = ui->lineEdit_3->text().toUtf8().constData();
-                string keyword2 = ui->lineEdit_4->text().toUtf8().constData();
-
-                /*
-                 * Case insensitive filtering of keywords
-                 */
-
-                if(!keyword1.empty()){
-                    if(!keyword2.empty()){
-                        //do nothing
-                    }
-                    else if(keyword2.empty()){
-                        keyword2 = keyword1;
-                    }
-                }
-                else if(keyword1.empty()){
-                    if(!keyword2.empty()){
-                        keyword1 = keyword2;
-                    }
-                    else if(keyword2.empty()){
-                        break;
-                    }
-                }
-                std::size_t keyword1found = i->find(keyword1);
-                for (char &c : keyword1){
-                    putchar(toupper(c));
-                }
-                std::size_t keyword1foundupper = i->find(keyword1);
-                for (char &c : keyword1){
-                    putchar(tolower(c));
-                }
-                std::size_t keyword1foundlower = i->find(keyword1);
-
-
-
-                std::size_t keyword2found = i->find(keyword2);
-                for (char &c : keyword1){
-                    putchar(toupper(c));
-                }
-                std::size_t keyword2foundupper = i->find(keyword2);
-                for (char &c : keyword1){
-                    putchar(tolower(c));
-                }
-                std::size_t keyword2foundlower = i->find(keyword2);
-                if (keyword1found!=std::string::npos && keyword2found!=std::string::npos){
-                    match = true;
-                }
-                if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
-                    match = true;
-                }
-                if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
-                    match = true;
-                }
-                if (keyword1foundlower!=std::string::npos && keyword2foundlower!=std::string::npos){
-                    match = true;
-                }
-                int index = std::distance( tweetCol.begin(), i );
-
-                /*
-                 * Remove mismatched table rows from the table
-                 */
-
-                if (!match){
-                    tv->hideRow(index);
-                    numRows--;
-                }
-
-            }
-            tv->show();
             QObject* button = QObject::sender();
-            if(button == ui->searchTab_firstCsvBrowseClick){
-                ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+            if(button == ui->searchTab_firstCsvBrowseClick||button == ui->searchTab_secondCsvBrowseClick||button == ui->displayTab_browseClick){
+                string keyword1 = "";
+                string keyword2 = "";
+                for(QVector<string>::iterator i=tweetCol.begin(); i != tweetCol.end(); i++){
+                    bool match = false;
+                    if(tv!=ui->tableView){
+                        keyword1 = ui->lineEdit_3->text().toUtf8().constData();
+                        keyword2 = ui->lineEdit_4->text().toUtf8().constData();
+                    }
+
+
+                    if(!keyword1.empty()){
+                        if(!keyword2.empty()){
+                            //do nothing
+                        }
+                        else if(keyword2.empty()){
+                            keyword2 = keyword1;
+                        }
+                    }
+                    else if(keyword1.empty()){
+                        if(!keyword2.empty()){
+                            keyword1 = keyword2;
+                        }
+                        else if(keyword2.empty()){
+                            break;
+                        }
+                    }
+
+                    std::size_t keyword1found = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(toupper(c));
+                    }
+                    std::size_t keyword1foundupper = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(tolower(c));
+                    }
+                    std::size_t keyword1foundlower = i->find(keyword1);
+
+
+
+                    std::size_t keyword2found = i->find(keyword2);
+                    for (char &c : keyword1){
+                        putchar(toupper(c));
+                    }
+                    std::size_t keyword2foundupper = i->find(keyword2);
+                    for (char &c : keyword1){
+                        putchar(tolower(c));
+                    }
+                    std::size_t keyword2foundlower = i->find(keyword2);
+                    if (keyword1found!=std::string::npos && keyword2found!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundupper!=std::string::npos && keyword2foundupper!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundlower!=std::string::npos && keyword2foundlower!=std::string::npos){
+                        match = true;
+                    }
+                    int index = std::distance( tweetCol.begin(), i );
+                    if (!match){
+                        tv->hideRow(index);
+                        numRows--;
+                    }
+
+                }
+
+                tv->show();
+                QObject* button = QObject::sender();
+                if(button == ui->searchTab_firstCsvBrowseClick){
+                    ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+                }
+                else if(button == ui->searchTab_secondCsvBrowseClick){
+                    ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+                }
+                else if(button == ui->displayTab_browseClick){
+                    ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+                }
             }
-            else if(button == ui->searchTab_secondCsvBrowseClick){
-                ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
-            }
-            else if(button == ui->displayTab_browseClick){
-                ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+            else if(button == ui->filterTab_browseClick){
+                string keyword1;
+                for(QVector<string>::iterator i=tweetCol.begin(); i != tweetCol.end(); i++){
+                    bool match = false;
+
+                    keyword1 = ui->comboBox->currentText().toStdString();
+
+                    std::size_t keyword1found = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(toupper(c));
+                    }
+                    std::size_t keyword1foundupper = i->find(keyword1);
+                    for (char &c : keyword1){
+                        putchar(tolower(c));
+                    }
+                    std::size_t keyword1foundlower = i->find(keyword1);
+
+
+                    if (keyword1found!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundupper!=std::string::npos){
+                        match = true;
+                    }
+                    if (keyword1foundlower!=std::string::npos){
+                        match = true;
+                    }
+                    int index = std::distance( tweetCol.begin(), i );
+                    if (!match){
+                        tv->hideRow(index);
+                        numRows--;
+                    }
+
+                }
+
+                tv->show();
+                QString tempStr = QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded");
+                ui->label_14->clear();
+                ui->label_14->setText(tempStr);
             }
         }
+        else if(header.size()==66){
+            CovidModel *covid19Model = new CovidModel(this);//replicate this for search and statistics tab
 
+            covid19Model->populateData(newCountry, newCount, header);
+            tv->setModel(covid19Model);
+            tv->horizontalHeader()->setVisible(true);
+        //    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+            tv->verticalHeader()->setMinimumWidth(25);
+            tv->verticalHeader()->setDefaultAlignment(Qt::AlignCenter);
+            tv->setSortingEnabled(true);//improve this code, sorting doesn't work
+
+            tv->resizeColumnsToContents();
+            tv->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+            tv->show();
+            QStringList sL;
+            for(int i = 0; i < newCountry.size(); i++){
+                QString tempStr = QString::fromStdString(newCountry[i]);
+                sL.append(tempStr);
+            }
+            ui->comboBox->addItems(sL);
+            ui->label_14->setText(QString("Top 10 countries with confirmed cases"));
+
+//            QObject* button = QObject::sender();
+//            if(button == ui->searchTab_firstCsvBrowseClick){
+//                ui->label_9->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+//            }
+//            else if(button == ui->searchTab_secondCsvBrowseClick){
+//                ui->label_10->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+//            }
+//            else if(button == ui->displayTab_browseClick){
+//                ui->label_11->setText(QString::fromStdString(to_string(numRows) + " rows x " + to_string(myModel->columnCount()) + " columns loaded"));
+//            }
+        }
     }
 
 
@@ -465,4 +618,9 @@ void MainWindow::on_searchTab_secondCsvBrowseClick_clicked()
 {
     displayTable(ui->tableView_4);
     displaySentimentPieChartOne();
+}
+
+void MainWindow::on_filterTab_browseClick_clicked()
+{
+    displayTable(ui->tableView_5);
 }
