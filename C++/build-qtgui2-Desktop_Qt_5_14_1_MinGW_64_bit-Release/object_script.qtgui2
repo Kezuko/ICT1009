@@ -1,0 +1,13 @@
+CNAModel.o
+SentimentMainWindow.o
+TwitterModel.o
+covid19model.o
+main.o
+mainwindow.o
+drilldownchart.o
+drilldownslice.o
+moc_CNAModel.o
+moc_SentimentMainWindow.o
+moc_TwitterModel.o
+moc_covid19model.o
+moc_mainwindow.o
