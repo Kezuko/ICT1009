@@ -1,0 +1,9 @@
+  int error = 0;
+  crawlerCNA Crawl = crawlerCNA(100);
+  error = Crawl.mainCrawl();
+  if(error == -1)
+      cout  << "Curl died." << endl;
+  error = 0;
+
+
+   return 0;
