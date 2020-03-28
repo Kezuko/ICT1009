@@ -128,7 +128,7 @@ std::ostream& operator <<(std::ostream &out, wordCount& wc){
 		
 		wc.writeIndex();
 
-		out<<"\n\n Average World Length is : " << wc.avgWordLength();
+		out<<"\n\n Average Word Length is : " << wc.avgWordLength();
 		out<<"\n Total Number of Words in file : " << wc.getCountWordsInFile();
 		out<<"\n Total Number of Sentences in file : "<<wc.getNumOfSent();
 		
