@@ -139,7 +139,7 @@ std::ostream& operator <<(std::ostream &out, wordCount& wc){
     return out;
 }
 
-int findTop(string &word) {
+int findTop(std::string &word) {
 	int instances[10000];
   	int topCount = instances[0];
   	int topIndex = 0;
