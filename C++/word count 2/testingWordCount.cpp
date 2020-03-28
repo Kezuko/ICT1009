@@ -23,7 +23,7 @@ int insert(string input)
 		cerr << "Too many unique words in input file."
 }
 
-int findTop(std::string &word) {
+int findTop(string &word) {
 
   	int topCount = instances[0];
   	int topIndex = 0;
