@@ -25,7 +25,7 @@
 #include <cstring>
 #include <cstdio>
 #include "covid19model.h"
-#include<bits/stdc++.h>
+#include "read2.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -45,7 +45,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_displayTab_browseClick_clicked()
 {
-    displayTable(ui->tableView);
+	vector<string> *unused = new vector<string>();
+	//vector<string> *ptr = &unused;
+    displayTable(ui->tableView, unused);
 }
 
 /*
@@ -53,8 +55,8 @@ void MainWindow::on_displayTab_browseClick_clicked()
  * Contents in the new window will be in pie chart. Visualising the Positive, Neutral and Negative ratings of Twitter tweets.
  */
 
-void MainWindow::displaySentimentPieChartOne(){
-    SentimentMainWindow *first = new SentimentMainWindow(this);
+void MainWindow::displaySentimentPieChartOne(vector<string> *sharedParsedData){
+	SentimentMainWindow *first = new SentimentMainWindow(this);
 
     QT_CHARTS_USE_NAMESPACE
 
@@ -70,7 +72,7 @@ void MainWindow::displaySentimentPieChartOne(){
         "Covid", "China", "Spreading", "Infectious", "Death", "Epicentre", "Risk", "Infection", "Vaccine", "Lockdown"
     };
     const QStringList ratings = {
-        "Very Negative", "Negative", "Neutral", "Positive", "Very Positive"
+        "Negative", "Positive"
     };
 
 //    for (const QString &name : ratings) {
@@ -89,14 +91,68 @@ void MainWindow::displaySentimentPieChartOne(){
     *series << new DrilldownSlice(QRandomGenerator::global()->bounded(1000), keywords[8], ratingsSeries);
     *series << new DrilldownSlice(QRandomGenerator::global()->bounded(1000), keywords[9], ratingsSeries);
 
+	sentiment sen;
+	sentiment pos("positive.txt");
+	sentiment neg("negative.txt");
+	
+	std::vector<std::string> positive;
+	std::vector<std::string> negative;
+	std::vector<std::string> strings;
+	std::map<std::string, double> senResults;
+	
+	
+
+	for(auto t = sharedParsedData->begin(); t != sharedParsedData->end(); ++t){
+		strings.push_back(*t);
+	}
+
+	positive = pos.readText();
+	negative = neg.readText();
+	senResults = sen.checkSentiment(strings,positive,negative);
+
+	//for (std::pair<std::string, double> element : senResults) {
+	//	// Accessing KEY from element
+	//	std::string sentiment = element.first;
+	//	// Accessing VALUE from element.
+	//	double value = element.second;
+	//}
+	//std::string s1 = "This 'is' a! good te@stin3g, and horrible string.";
+	//    std::string s2 = "This 'is' shit lousy very good excellent.";
+	//    
+	//    
+	//    
+	//    
+	//
+	//    // // senResults
+	//
+	//    // for( auto const& [key, val] : senResults ){
+	//    //     std::cout << key << ':' << val << std::endl ;
+	//    // }
+	//    
+
 
     QObject::connect(series, &QPieSeries::clicked, chart, &DrilldownChart::handleSliceClicked);
+	
+	int count = 0;
 
-    *ratingsSeries << new DrilldownSlice(QRandomGenerator::global()->bounded(100), ratings[0], series);
-    *ratingsSeries << new DrilldownSlice(QRandomGenerator::global()->bounded(100), ratings[1], series);
-    *ratingsSeries << new DrilldownSlice(QRandomGenerator::global()->bounded(100), ratings[2], series);
-    *ratingsSeries << new DrilldownSlice(QRandomGenerator::global()->bounded(100), ratings[3], series);
-    *ratingsSeries << new DrilldownSlice(QRandomGenerator::global()->bounded(100), ratings[4], series);//commented out series->sum()
+	for (std::pair<std::string, double> element : senResults) {
+		// Accessing KEY from element
+		std::string sentiment = element.first;
+
+		// Convert String to QString
+		QString tempQStr = QString::fromStdString(sentiment);
+
+		// Accessing VALUE from element.
+		int value = element.second;
+
+		*ratingsSeries << new DrilldownSlice(value, tempQStr, series);
+		count++;
+	}
+
+	/**ratingsSeries << new DrilldownSlice(value, ratings[0], series);
+    *ratingsSeries << new DrilldownSlice(value2, ratings[1], series);*/
+	//commented out series->sum()
+	//commented out QRandomGenerator::global()->bounded(100)
 //    }
 
     QObject::connect(ratingsSeries, &QPieSeries::clicked, chart, &DrilldownChart::handleSliceClicked);
@@ -114,7 +170,7 @@ void MainWindow::displaySentimentPieChartOne(){
  * No success or error message is needed for displaying the table, a pointer of QTableView will be referenced as an argument to call the inbuilt methods of QTableView to populate it.
  */
 
-void MainWindow::displayTable(QTableView* tv){
+void MainWindow::displayTable(QTableView* tv, vector<string> *sharedParsedData){
     /*
      * Open a file dialog
      */
@@ -179,12 +235,13 @@ void MainWindow::displayTable(QTableView* tv){
     //        }
             auto row = i->data();
             if (size==0){
-                size = row->size();
+                size = int(row->size());
             }
             if (header.size()==3){//TheGuardian/CNA has 3 headers
                 categoryCol.push_back(row[0]);
                 titleCol.push_back(row[1]);
                 dateCol.push_back(row[2]);
+				sharedParsedData->push_back(row[1]);
             }
             else if (header.size()==5){//Twitter has 5 headers
                 usernameCol.push_back(row[0]);
@@ -192,12 +249,13 @@ void MainWindow::displayTable(QTableView* tv){
                 retweetCol.push_back(row[2]);
                 favouriteCol.push_back(row[3]);
                 dateCol.push_back(row[4]);
+				sharedParsedData->push_back(row[1]);
+				
             }
             else if(header.size()==66){
                 countryCol.push_back(row[1]);
                 confirmedCasesCol.push_back(row[65]);
             }//Covid19 has 66 columns
-
         }
         struct covid {
             string country;
@@ -606,8 +664,10 @@ void MainWindow::displayTable(QTableView* tv){
 
 void MainWindow::on_searchTab_firstCsvBrowseClick_clicked()
 {
-    displayTable(ui->tableView_2);
-    displaySentimentPieChartOne();
+	vector<string> *sharedParsedData = new vector<string>();
+	//vector<string>* ptr = &sharedParsedData;
+    displayTable(ui->tableView_2, sharedParsedData);
+    displaySentimentPieChartOne(sharedParsedData);
 }
 
 /*
@@ -616,11 +676,15 @@ void MainWindow::on_searchTab_firstCsvBrowseClick_clicked()
 
 void MainWindow::on_searchTab_secondCsvBrowseClick_clicked()
 {
-    displayTable(ui->tableView_4);
-    displaySentimentPieChartOne();
+	vector<string> *sharedParsedData = new vector<string>();
+	//vector<string>* ptr = &sharedParsedData;
+    displayTable(ui->tableView_4, sharedParsedData);
+    displaySentimentPieChartOne(sharedParsedData);
 }
 
 void MainWindow::on_filterTab_browseClick_clicked()
 {
-    displayTable(ui->tableView_5);
+	vector<string> *unused = new vector<string>();
+	//vector<string>* ptr = &unused;
+    displayTable(ui->tableView_5, unused);
 }
