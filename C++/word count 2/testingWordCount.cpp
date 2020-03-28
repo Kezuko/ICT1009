@@ -7,6 +7,8 @@ string words[MAX];
 int instances[MAX];
 int count = 0;
 
+using namespace std;
+
 int insert(string input)
 {
 	for(int i = 0; i < count; i++)
