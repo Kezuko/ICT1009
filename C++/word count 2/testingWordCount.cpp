@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 		
 	int topCount = 0;
 	for(int i = 0; i < 10; i++)
-		cout << findTop(wc) << " " << " " wc << endl
+		cout << findTop(word) << " " << " " word << endl
 		
 		return 0;
 }
