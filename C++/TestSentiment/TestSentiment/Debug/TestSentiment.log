@@ -1,0 +1,8 @@
+﻿  TestSentiment.cpp
+C:\Users\Zhiwen\Desktop\TestSentiment\TestSentiment\parser.h(256,39): warning C4244: '=': conversion from 'std::streamsize' to 'size_t', possible loss of data
+C:\Users\Zhiwen\Desktop\TestSentiment\TestSentiment\TestSentiment.cpp(87,13): warning C4244: 'initializing': conversion from '_Ty2' to 'int', possible loss of data
+C:\Users\Zhiwen\Desktop\TestSentiment\TestSentiment\TestSentiment.cpp(87,13): warning C4244:         with
+C:\Users\Zhiwen\Desktop\TestSentiment\TestSentiment\TestSentiment.cpp(87,13): warning C4244:         [
+C:\Users\Zhiwen\Desktop\TestSentiment\TestSentiment\TestSentiment.cpp(87,13): warning C4244:             _Ty2=double
+C:\Users\Zhiwen\Desktop\TestSentiment\TestSentiment\TestSentiment.cpp(87,13): warning C4244:         ]
+  TestSentiment.vcxproj -> C:\Users\Zhiwen\Desktop\TestSentiment\Debug\TestSentiment.exe
