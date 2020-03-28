@@ -140,9 +140,10 @@ std::ostream& operator <<(std::ostream &out, wordCount& wc){
 }
 
 int findTop(string &word) {
-  int topCount = instances[0];
-  int topIndex = 0;
-  int count = 0;
+	int instances[10000];
+  	int topCount = instances[0];
+  	int topIndex = 0;
+	int count = 0;
   
   for(int = 1 ; i < count; i++)
     if (instances[i] > topCount){
